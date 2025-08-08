@@ -4,7 +4,12 @@ namespace Database\Seeders;
 
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\UserProfile;
+use Illuminate\Support\Str;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,9 +20,99 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        // Run the roles & permissions first
+        $this->call(RolesAndPermissionsSeeder::class);
+
+        $user = User::factory()->create([
+            'name' => 'Admin',
+            'email' => 'shadow902@gmail.com',
+            'password' => Hash::make('Welc0me!1225'),
         ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Site Administrator',
+        ]);
+
+        $user->assignRole('admin');
+
+        $user = User::factory()->create([
+            'name' => 'Test User 1',
+            'email' => 'testuser1@example.com',
+            'password' => Hash::make('Welc0me!1225'),
+        ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Test-User-1',
+        ]);
+
+        $user->assignRole('subscriber');
+
+        $user = User::factory()->create([
+            'name' => 'Test User 2',
+            'email' => 'testuser2@example.com',
+            'password' => Hash::make('Welc0me!1225'),
+        ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Test-User-2',
+        ]);
+
+        $user->assignRole('subscriber');
+
+        $user = User::factory()->create([
+            'name' => 'Test User 3',
+            'email' => 'testuser3@example.com',
+            'password' => Hash::make('Welc0me!1225'),
+        ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Test-User-3',
+        ]);
+
+        $user->assignRole('subscriber');
+
+        $user = User::factory()->create([
+            'name' => 'Test User 4',
+            'email' => 'testuser4@example.com',
+            'password' => Hash::make('Welc0me!1225'),
+        ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Test-User-4',
+        ]);
+
+        $user->assignRole('subscriber');
+
+        $user = User::factory()->create([
+            'name' => 'Test User 5',
+            'email' => 'testuser5@example.com',
+            'password' => Hash::make('Welc0me!1225'),
+        ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Test-User-5',
+        ]);
+
+        $user->assignRole('subscriber');
+
+        $user = User::factory()->create([
+            'name' => 'Test User 6',
+            'email' => 'testuser6@example.com',
+            'password' => Hash::make('Welc0me!1225'),
+        ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Test-User-6',
+        ]);
+
+        $user->assignRole('subscriber');
+
     }
 }
