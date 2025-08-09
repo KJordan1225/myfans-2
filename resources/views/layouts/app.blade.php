@@ -16,6 +16,7 @@
         <div class="container-fluid">
             <!-- content here -->
             @yield('content')
+            @include('sweetalert2::index')
         </div>
         <!-- Jquery JS -->
         <script

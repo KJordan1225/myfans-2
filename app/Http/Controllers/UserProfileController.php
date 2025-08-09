@@ -22,7 +22,15 @@ class UserProfileController extends Controller
      */
     public function index()
     {
-		return;
+        $user = Auth::user();
+
+        $profile = $user->profile; // assumes hasOne('UserProfile') relationship
+
+        if ($profile) {
+            return redirect()->route('user-profiles.edit', $profile->id);
+        } else {
+            return redirect()->route('user-profiles.create');
+        }
     }
 
     /**
@@ -30,7 +38,7 @@ class UserProfileController extends Controller
      */
     public function create()
     {
-        return;
+        return view('user-profile.create');
     }
 
     /**
@@ -125,22 +133,33 @@ class UserProfileController extends Controller
 
         // Handle avatar replacement
         if ($request->hasFile('avatar')) {
-				$userProfile->addMediaFromRequest('avatar')
-					->toMediaCollection('avatar');
+            if ($userProfile->avatar && Storage::disk('public')->exists($userProfile->avatar)) {
+                Storage::disk('public')->delete($userProfile->avatar);
             }
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
 
-		if ($request->hasFile('banner')) {
-				$userProfile->addMediaFromRequest('banner')
-					->toMediaCollection('banner');
-		}
+        // Handle banner replacement
+        if ($request->hasFile('banner')) {
+            if ($userProfile->banner && Storage::disk('public')->exists($userProfile->banner)) {
+                Storage::disk('public')->delete($userProfile->banner);
+            }
+            $validated['banner'] = $request->file('banner')->store('banners', 'public');
+        }
 
         // Handle checkbox for is_creator
         $validated['is_creator'] = $request->has('is_creator');
 
-        $userProfile->update($validated);        
+        $userProfile->update($validated);
+
+        // check if processing fee has been paid
+        if ($userProfile->is_creator && !$userProfile->processing_paid){
+            return redirect()
+            ->route('creator.stripe.checkout');
+        }
 
         return redirect()
-            ->route('user-profile.edit', $userProfile)
+            ->route('user-profiles.edit', $userProfile)
             ->with('success', 'Profile updated successfully.'); 
     
     }
