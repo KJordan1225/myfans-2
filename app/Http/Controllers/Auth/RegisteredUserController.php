@@ -41,6 +41,13 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $userProfile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'temporary display name',
+        ]);
+
+        $user->assignRole('subscriber');
+
         event(new Registered($user));
 
         Auth::login($user);
