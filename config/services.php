@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    // config/services.php
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+    ],
+
+
 ];
