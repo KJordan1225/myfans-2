@@ -45,6 +45,10 @@
                                 <!-- Avatar Upload -->
                                 <div class="mb-3">
                                     <label for="avatar" class="form-label">Avatar</label>
+                                    @php
+                                        $avatarUrl = $profile?->getFirstMediaUrl('avatar') ?: asset('images/placeholders/test-avatar-2.jpg');
+                                    @endphp
+
                                     <input type="file" name="avatar" id="avatar" accept="image/*"
                                         class="form-control @error('avatar') is-invalid @enderror"
                                         onchange="previewImage(this, 'avatar-preview')">
@@ -52,8 +56,14 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <div class="mt-2">
-                                        <img id="avatar-preview" src="#" alt="Avatar Preview"
-                                            class="d-none border rounded" style="width: 100px; height: 100px; object-fit: cover;">
+                                        <!-- <img id="avatar-preview" src="#" alt="Avatar Preview"
+                                            class="d-none border rounded" style="width: 100px; height: 100px; object-fit: cover;"> -->
+                                            <img
+                                                src="{{ $avatarUrl }}"
+                                                alt="Avatar Preview"
+                                                class="w-24 h-24 rounded-full object-cover border"
+                                            />
+
                                     </div>
                                 </div>
 
@@ -61,6 +71,10 @@
                                 <!-- Banner Upload -->
                                 <div class="mb-3">
                                     <label for="banner" class="form-label">Banner</label>
+                                    @php
+                                        $bannerUrl = $profile?->getFirstMediaUrl('banner') ?: asset('images/placeholders/test-banner-3.png');
+                                    @endphp
+
                                     <input type="file" name="banner" id="banner" accept="image/*"
                                         class="form-control @error('banner') is-invalid @enderror"
                                         onchange="previewImage(this, 'banner-preview')">
@@ -68,8 +82,14 @@
                                         <div class="invalid-feedback">{{ $message }}</div>
                                     @enderror
                                     <div class="mt-2">
-                                        <img id="banner-preview" src="#" alt="Banner Preview"
-                                            class="d-none border rounded" style="width: 100%; max-height: 200px; object-fit: cover;">
+                                        <!-- <img id="banner-preview" src="#" alt="Banner Preview"
+                                            class="d-none border rounded" style="width: 100%; max-height: 200px; object-fit: cover;"> -->
+                                            <img
+                                                src="{{ $bannerUrl }}"
+                                                alt="Banner Preview"
+                                                class="w-full h-48 object-cover"
+                                            />
+
                                     </div>
                                 </div>
 
