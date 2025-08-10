@@ -46,7 +46,7 @@
                                 <div class="mb-3">
                                     <label for="avatar" class="form-label">Avatar</label>
                                     @php
-                                        $avatarUrl = $profile?->getFirstMediaUrl('avatar') ?: asset('images/placeholders/test-avatar-2.jpg');
+                                        $avatarUrl = $profile?->getFirstMediaUrl('avatar') ?: asset('images/placeholders/default-avatar.png');
                                     @endphp
 
                                     <input type="file" name="avatar" id="avatar" accept="image/*"
@@ -72,7 +72,7 @@
                                 <div class="mb-3">
                                     <label for="banner" class="form-label">Banner</label>
                                     @php
-                                        $bannerUrl = $profile?->getFirstMediaUrl('banner') ?: asset('images/placeholders/test-banner-3.png');
+                                        $bannerUrl = $profile?->getFirstMediaUrl('banner') ?: asset('images/placeholders/default-banner.png');
                                     @endphp
 
                                     <input type="file" name="banner" id="banner" accept="image/*"
