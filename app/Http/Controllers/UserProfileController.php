@@ -131,21 +131,14 @@ class UserProfileController extends Controller
             'is_creator'   => 'sometimes|boolean',
         ]);
 
-        // Handle avatar replacement
         if ($request->hasFile('avatar')) {
-            if ($userProfile->avatar && Storage::disk('public')->exists($userProfile->avatar)) {
-                Storage::disk('public')->delete($userProfile->avatar);
-            }
-            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+            $userProfile->addMediaFromRequest('avatar')->toMediaCollection('avatar');
         }
 
-        // Handle banner replacement
         if ($request->hasFile('banner')) {
-            if ($userProfile->banner && Storage::disk('public')->exists($userProfile->banner)) {
-                Storage::disk('public')->delete($userProfile->banner);
-            }
-            $validated['banner'] = $request->file('banner')->store('banners', 'public');
+            $userProfile->addMediaFromRequest('banner')->toMediaCollection('banner');
         }
+
 
         // Handle checkbox for is_creator
         $validated['is_creator'] = $request->has('is_creator');
@@ -159,7 +152,7 @@ class UserProfileController extends Controller
         }
 
         return redirect()
-            ->route('user-profiles.edit', $userProfile)
+            ->route('user-profile.edit', $userProfile)
             ->with('success', 'Profile updated successfully.'); 
     
     }
