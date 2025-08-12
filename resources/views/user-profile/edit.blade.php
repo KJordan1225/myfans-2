@@ -24,7 +24,6 @@
                 <div class="col-md-12">
                     <div class="max-w-xl mx-auto p-6 rounded shadow">
                         <h2 class="text-2xl font-bold mb-4 dark:text-gray-100">Edit Your Profile</h2>
-
                             <form action="{{ route('user-profile.update', $profile) }}" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
                                 @csrf
                                 @method('PUT')

@@ -12,9 +12,12 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {    
-    Route::get('/user-profile/{id}/edit', [UserProfileController::class, 'edit'])->name('user-profile.edit');    
-    Route::put('/user-profile/{id}/update', [UserProfileController::class, 'update'])->name('user-profile.update');    
+Route::middleware('auth')->group(function () {
+    Route::resource('user-profile', UserProfileController::class);
+    
+    Route::get('/@{username}', [UserProfileController::class, 'showByUsername'])
+    ->where('username', '[A-Za-z0-9_-]+')
+    ->name('profile.public');    
 });
 
 require __DIR__.'/auth.php';

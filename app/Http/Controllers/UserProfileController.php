@@ -27,9 +27,9 @@ class UserProfileController extends Controller
         $profile = $user->profile; // assumes hasOne('UserProfile') relationship
 
         if ($profile) {
-            return redirect()->route('user-profiles.edit', $profile->id);
+            return redirect()->route('user-profile.edit', $profile);
         } else {
-            return redirect()->route('user-profiles.create');
+            return redirect()->route('user-profile.create');
         }
     }
 
@@ -102,10 +102,12 @@ class UserProfileController extends Controller
     /**
      * Show the form for editing the specified user profile.
      */
-    public function edit(string $id)
+    public function edit(UserProfile $profile)
     {
-        $profile = UserProfile::find($id);
+        $user = Auth::user();
 
+        $profile = $user->profile;
+        
         if (!$profile) {
             return redirect()->route('dashboard')->with('error', 'Profile not found.');
         }

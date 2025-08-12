@@ -21,7 +21,7 @@
             <div class="collapse {{ request()->routeIs('user-profiles.index') ? 'show' : ''}}" id="category-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li>
-                        <a href="#" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                        <a href="{{ route('user-profile.index') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
                            <i class="fas fa-list me-1"></i> Create/Edit Your Profile
                         </a>
                     </li>
