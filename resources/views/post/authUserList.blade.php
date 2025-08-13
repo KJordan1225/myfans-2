@@ -9,9 +9,15 @@
         <div class="row mt-2">
             <div class="col-md-9">
 
-                <div class="container mt-4">
-                    <h2 class="mb-4">All Posts</h2>
+                <div class="container mt-4">                    
 
+                    <h2 class="mb-4">All Posts</h2>
+                    <br>
+                    <a href="#" class="btn btn-primary">
+                        <i class="bi bi-plus-lg"></i> Create New Post
+                    </a>
+                    <br>
+                    <br>
                     @if(session('success'))
                         <div class="alert alert-success">{{ session('success') }}</div>
                     @endif
