@@ -16,4 +16,12 @@ class PostController extends Controller
 
         return view('post.authUserList', compact('posts'));
     }
+
+    public function authUserPostsCreate()
+    {
+        $userId = Auth::id();
+        $posts = Post::where('user_id', $userId)->get();
+
+        return view('post.authUserCreate', compact('posts', 'userId'));
+    }
 }
