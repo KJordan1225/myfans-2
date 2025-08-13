@@ -24,8 +24,7 @@
                     @endif
 
                     <form action="#" method="POST">
-                        @csrf
-                        @method('PATCH')
+                        @csrf                        
 
                         {{-- Title --}}
                         <div class="mb-3">
