@@ -2,27 +2,32 @@
 
 namespace App\Http\Requests\Post;
 
+use App\Models\Post;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Auth\Access\AuthorizationException;
 
-class StorePostRequest extends FormRequest
+class UpdatePostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
-	{
-		$user = $this->user(); // returns the currently authenticated user
+    {
+        $postId = $this->route('post')->id; // returns the ID
+        $user = $this->user(); // returns the currently authenticated user
 
-		// Must be logged in, have the "creator" role, and their profile must exist and be marked as creator
-		return $user 
-			&& $user->hasRole('creator') 
-			&& $user->profile 
-			&& $user->profile->is_creator
-			&& $user->id === $post->user_id;
-	}
+        // Must be logged in, have the "creator" role, and their profile must exist and be marked as creator
+        return $user 
+            && $user->hasRole('creator') 
+            && $user->profile 
+            && $user->profile->is_creator
+            && $postId === Auth::id();
+    }
+    
 
     /**
      * Get the validation rules that apply to the request.

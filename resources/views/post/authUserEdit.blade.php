@@ -22,11 +22,10 @@
                             {{ session('success') }}
                         </div>
                     @endif
-
-                    <form action="#" method="POST">
+                    <form action="{{ route('creator.posts.update', $post) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        
+
                         {{-- Title --}}
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>

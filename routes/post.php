@@ -10,6 +10,6 @@ Route::prefix('creator')->middleware(['auth'])->group(function () {
     Route::get('/posts/create', [PostController::class, 'authUserPostsCreate'])->name('creator.posts.create');
     Route::post('/posts/store', [PostController::class, 'authUserPostsStore'])->name('creator.posts.store');
     Route::get('/posts/{id}/edit', [PostController::class, 'authUserPostsEdit'])->name('creator.posts.edit');
-    Route::put('/posts/{id}/update', [PostController::class, 'authUserPostsUpdate'])->name('creator.posts.update');
+    Route::put('/posts/{post}/update', [PostController::class, 'authUserPostsUpdate'])->name('creator.posts.update');
 });
 

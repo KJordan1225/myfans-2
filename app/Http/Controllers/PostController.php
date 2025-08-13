@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\Post\StorePostRequest;
+use App\Http\Requests\Post\UpdatePostRequest;
 
 class PostController extends Controller
 {
@@ -51,5 +52,40 @@ class PostController extends Controller
         $post = Post::find($id);
 
         return view ('post.authUserEdit', compact('post'));
+    }
+
+    public function authUserPostsUpdate(UpdatePostRequest $request, Post $post)
+    {
+        
+        // Ensure the logged-in user owns this post
+        if ($post->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        // Validate request
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255'],
+            'body' => ['nullable', 'string'],
+            'price' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                'max:99999999.99',
+                'regex:/^\d+(\.\d{1,2})?$/',
+            ],
+            'is_paid' => ['boolean'],
+            'visibility' => ['required', 'in:public,subscribers,paid'],
+        ]);
+
+        // Checkbox handling — if unchecked, make sure it's false
+        $validated['is_paid'] = $request->has('is_paid');
+
+        // Update post
+        $post->update($validated);
+
+        // Redirect back with success message
+        return redirect()
+            ->route('creator.posts.edit', $post)
+            ->with('success', 'Post updated successfully.');
     }
 }
