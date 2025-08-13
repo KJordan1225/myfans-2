@@ -45,4 +45,11 @@ class PostController extends Controller
         return redirect()->route('creator.posts.create')
                      ->with('success', 'Post created! Now upload media.');
     } 
+
+    public function authUserPostsEdit(string $id)
+    {
+        $post = Post::find($id);
+
+        return view ('post.authUserEdit', compact('post'));
+    }
 }

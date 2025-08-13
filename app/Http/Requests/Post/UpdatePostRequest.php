@@ -13,15 +13,16 @@ class StorePostRequest extends FormRequest
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
-    {
-        $user = $this->user(); // returns the currently authenticated user
+	{
+		$user = $this->user(); // returns the currently authenticated user
 
-        // Must be logged in, have the "creator" role, and their profile must exist and be marked as creator
-        return $user 
-            && $user->hasRole('creator') 
-            && $user->profile 
-            && $user->profile->is_creator;
-    }
+		// Must be logged in, have the "creator" role, and their profile must exist and be marked as creator
+		return $user 
+			&& $user->hasRole('creator') 
+			&& $user->profile 
+			&& $user->profile->is_creator
+			&& $user->id === $post->user_id;
+	}
 
     /**
      * Get the validation rules that apply to the request.

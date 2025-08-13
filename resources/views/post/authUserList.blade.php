@@ -42,7 +42,11 @@
                                             <td>{{ $post->id }}</td>
                                             <td>{{ $post->title }}</td>
                                             <td class="text-center">
-                                                <a href="#" class="btn btn-sm btn-warning me-1">Edit</a>
+                                                <a href="{{ route('creator.posts.edit', $post->id) }}" 
+                                                    class="btn btn-sm btn-warning me-1">
+                                                    Edit
+                                                </a>
+
 
                                                 <form action="#" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure?');">
                                                     @csrf
