@@ -23,9 +23,8 @@
                         </div>
                     @endif
 
-                    <form action="#" method="POST">
+                    <form action="{{ route('creator.posts.store') }}" method="POST">
                         @csrf                        
-
                         {{-- Title --}}
                         <div class="mb-3">
                             <label for="title" class="form-label">Title</label>
