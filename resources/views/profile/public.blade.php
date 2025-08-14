@@ -43,8 +43,8 @@
 		position: absolute; /* Positions the profile image relative to its parent (banner-container) */
 		bottom: 1px; /* Adjust as needed for vertical position */
 		left: 1px; /* Adjust as needed for horizontal position */
-		width: 25px; /* Desired width of the circular profile image */
-		height: 25px; /* Desired height of the circular profile image */
+		width: 40px; /* Desired width of the circular profile image */
+		height: 40px; /* Desired height of the circular profile image */
 		border-radius: 50%; /* Makes the image circular */
 		border: 4px solid #fff; /* White border around the profile image */
 		box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow */
