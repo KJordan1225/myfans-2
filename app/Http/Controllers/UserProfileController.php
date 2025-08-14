@@ -176,16 +176,19 @@ class UserProfileController extends Controller
         $username = ltrim($username, '@');
         
         // Find the user by username or return 404
-        $user = User::where('username', $username)->firstOrFail();
+        // $user = User::where('username', $username)->firstOrFail();
 
         // Load the related UserProfile (assuming hasOne relationship)
-        $profile = $user->userProfile;
-
+        $profile = UserProfile::where('display_name', $username)->firstOrFail();
+        $user = $profile->user;
+        
         // Optionally load other data: posts, subscriptions, etc.
 
-        return view('profiles.public', [
-            'user'    => $user,
+        return view('profile.public', [
+            'user' => $user,
             'profile' => $profile,
         ]);
     }
+
+    
 }
