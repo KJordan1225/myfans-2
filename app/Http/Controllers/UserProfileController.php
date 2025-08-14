@@ -186,7 +186,7 @@ class UserProfileController extends Controller
         $user = $profile->user;
         
         // Optionally load other data: posts, subscriptions, etc.
-        $posts = Post::where('user_id', $user->id);
+        $posts = Post::where('user_id', $user->id)->get();
         $postCount = $posts->count();
 
         return view('profile.public', [
