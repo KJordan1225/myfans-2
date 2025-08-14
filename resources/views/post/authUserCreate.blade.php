@@ -43,6 +43,25 @@
                             @enderror
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label">Attachments (multiple)</label>
+                            <input class="form-control" type="file" name="attachments[]" multiple>
+                            @if(isset($post))
+                                <div class="d-flex flex-wrap gap-2 mt-2">
+                                    @foreach($post->getMedia('attachments') as $media)
+                                        <a href="{{ $media->getFullUrl() }}" target="_blank">
+                                            @if(str_starts_with($media->mime_type, 'image/'))
+                                                <img src="{{ $media->getUrl('thumb') }}" class="rounded" style="width: 120px;">
+                                            @else
+                                                <div class="border p-2 rounded small">{{ $media->file_name }}</div>
+                                            @endif
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+
+
                         {{-- Price --}}
                         <div class="mb-3">
                             <label for="price" class="form-label">Price</label>
