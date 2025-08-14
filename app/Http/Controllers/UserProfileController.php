@@ -133,11 +133,13 @@ class UserProfileController extends Controller
             'is_creator'   => 'sometimes|boolean',
         ]);
 
+
         if ($request->hasFile('avatar')) {
             $userProfile->addMediaFromRequest('avatar')->toMediaCollection('avatar');
         }
 
         if ($request->hasFile('banner')) {
+            // dd('upload banner');
             $userProfile->addMediaFromRequest('banner')->toMediaCollection('banner');
         }
 
