@@ -8,7 +8,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 
-class Post extends Model
+class Post extends Model implements HasMedia
 {
     use InteractsWithMedia;
     
@@ -36,6 +36,10 @@ class Post extends Model
 
         // Multiple attachments (images, pdfs, etc.)
         $this->addMediaCollection('attachments');
-    }
 
+        // Allow multiple MP4s per post (public disk by default)
+        $this->addMediaCollection('videos')
+            ->useDisk('public')	
+            ->acceptsMimeTypes(['video/mp4', 'video/quicktime']); // adjust if needed
+    }
 }

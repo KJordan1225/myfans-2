@@ -42,6 +42,7 @@ class StorePostRequest extends FormRequest
 			],
 			'is_paid' => 'boolean',
 			'visibility' => ['required', 'in:public,subscribers,paid'],
+            'video' => ['nullable','file','mimetypes:video/mp4,video/quicktime','max:51200'],
         ];
     }
 }

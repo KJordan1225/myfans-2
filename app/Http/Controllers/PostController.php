@@ -43,6 +43,12 @@ class PostController extends Controller
             'visibility' => $request->visibility,
         ]);
 
+        if ($request->hasFile('video')) {
+            $post->addMediaFromRequest('video')->toMediaCollection('videos');
+        }
+
+
+
         return redirect()->route('creator.posts.create')
                      ->with('success', 'Post created! Now upload media.');
     } 
@@ -80,8 +86,15 @@ class PostController extends Controller
         // Checkbox handling — if unchecked, make sure it's false
         $validated['is_paid'] = $request->has('is_paid');
 
+        if ($request->hasFile('video')) {
+            // appends another video; if you want to replace, clear first:
+            // $post->clearMediaCollection('videos');
+            $post->addMediaFromRequest('video')->toMediaCollection('videos');
+        }
+
+
         // Update post
-        $post->update($validated);
+        $post->update($validated);        
 
         // Redirect back with success message
         return redirect()

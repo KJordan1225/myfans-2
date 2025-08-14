@@ -12,6 +12,19 @@
     <div class="row">
         <div class="col-md-8 offset-md-2">
             <div class="card shadow-sm">
+
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <h5 class="mb-2">Please fix the following:</h5>
+                        <ul class="mb-0">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+
                 <div class="card-header bg-primary text-white">
                     <h4 class="mb-0">Create Post</h4>
                 </div>
@@ -23,7 +36,7 @@
                         </div>
                     @endif
 
-                    <form action="{{ route('creator.posts.store') }}" method="POST">
+                    <form action="{{ route('creator.posts.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf                        
                         {{-- Title --}}
                         <div class="mb-3">
@@ -44,23 +57,14 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Attachments (multiple)</label>
-                            <input class="form-control" type="file" name="attachments[]" multiple>
-                            @if(isset($post))
-                                <div class="d-flex flex-wrap gap-2 mt-2">
-                                    @foreach($post->getMedia('attachments') as $media)
-                                        <a href="{{ $media->getFullUrl() }}" target="_blank">
-                                            @if(str_starts_with($media->mime_type, 'image/'))
-                                                <img src="{{ $media->getUrl('thumb') }}" class="rounded" style="width: 120px;">
-                                            @else
-                                                <div class="border p-2 rounded small">{{ $media->file_name }}</div>
-                                            @endif
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endif
+                            <label class="form-label">Upload MP4 video</label>
+                            <input type="file"
+                                name="video"
+                                id="video"
+                                class="form-control"
+                                accept="video/mp4,video/quicktime">
+                            <small class="text-muted">Max ~50MB (adjust in validation)</small>
                         </div>
-
 
                         {{-- Price --}}
                         <div class="mb-3">
