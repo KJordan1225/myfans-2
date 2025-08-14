@@ -42,10 +42,7 @@
 </style>
 
 
-<div class="container mt-5">
-	<h1>Banner with Profile Overlay Example</h1>
-	<p>This demonstrates how to overlay a circular profile image on the lower-left corner of a banner image using Bootstrap 5 and custom CSS.</p>
-
+<div class="container mt-1">	
 	<div class="banner-container">
 		<!-- Banner -->
 			@if ($profile->hasMedia('banner'))
@@ -62,7 +59,7 @@
 	</div>
 
 	<div class="mt-4">
-		<p>You can adjust the `height` of `.banner-container` and the `width`/`height`, `bottom`, and `left` values of `.profile-img-overlay` in the CSS to fit your design needs.</p>
+		<p>{{ $postCount }} Posts</p>
 	</div>
 </div> 
 

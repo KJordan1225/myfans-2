@@ -7,7 +7,7 @@
             <div class="collapse {{ request()->routeIs('admin.index') ? 'show' : ''}}" id="home-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li>
-                        <a href="#" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                        <a href="{{ route('dashboard') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
                            <i class="fas fa-dashboard me-1"></i> Dashboard
                         </a>
                     </li>
@@ -45,7 +45,7 @@
             <div class="collapse {{ request()->routeIs('admin.subcategories.index') || request()->routeIs('admin.subcategories.create') || request()->routeIs('admin.subcategories.edit') ? 'show' : ''}}" id="subcategory-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li>
-                        <a href="#" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                        <a href="{{ route('creator.posts.create') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
                            <i class="fas fa-layer-group me-1"></i> Create Post
                         </a>
                     </li>
