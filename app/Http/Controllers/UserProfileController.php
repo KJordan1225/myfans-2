@@ -47,7 +47,7 @@ class UserProfileController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'display_name' => 'required|string|max:255',
+            'display_name' => 'required|string|max:255|regex:/^(?![_-])[A-Za-z0-9_-]+(?<![_-])$/',
             'bio'          => 'nullable|string',
             'avatar'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
             'banner'       => 'nullable|image|mimes:jpg,jpeg,png,webp|max:4096',
@@ -123,7 +123,7 @@ class UserProfileController extends Controller
         $userProfile = UserProfile::find($id);
 
         $validated = $request->validate([
-            'display_name' => 'required|string|max:255',
+            'display_name' => 'required|string|max:255|regex:/^(?![_-])[A-Za-z0-9_-]+(?<![_-])$/',
             'bio'          => 'nullable|string',
             'avatar'       => 'sometimes|image|mimes:jpg,jpeg,png,webp|max:2048',
             'banner'       => 'sometimes|image|mimes:jpg,jpeg,png,webp|max:4096',
