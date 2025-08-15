@@ -16,6 +16,7 @@ class Post extends Model implements HasMedia
         'user_id',
         'title',
         'body',
+        'media_type',
         'price',
         'is_paid',
         'visibility',
