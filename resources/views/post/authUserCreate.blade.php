@@ -60,7 +60,7 @@
 						
 						{{-- Media Type --}}
 						<div class="mb-3">
-							<label for="mediaType" class="form-label">Media Upload Type</label>
+							<label for="mediaType" class="form-label">Media Upload Type (required)</label>
 							<select id="mediaType" name="media_type" class="form-select">
 								<option value="">-- Select --</option>
 								<option value="image" {{ old('media_type') === 'image' ? 'selected' : '' }}>Image</option>

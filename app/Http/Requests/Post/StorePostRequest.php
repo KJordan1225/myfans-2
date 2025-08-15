@@ -42,7 +42,20 @@ class StorePostRequest extends FormRequest
 			],
 			'is_paid' => 'boolean',
 			'visibility' => ['required', 'in:public,subscribers,paid'],
-            'video' => ['nullable','file','mimetypes:video/mp4,video/quicktime','max:51200'],
+                    'image' => [
+            'nullable',
+            'required_without:video',      // require if no video
+            'image',
+            'max:5120'                      // 5MB in KB
+        ],
+        'video' => [
+            'nullable',
+            'required_without:image',      // require if no image
+            'file',
+            'mimetypes:video/mp4,video/quicktime',
+            'max:51200'                     // 50MB in KB
+        ],
+
         ];
     }
 }
