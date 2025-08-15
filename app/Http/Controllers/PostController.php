@@ -112,4 +112,14 @@ class PostController extends Controller
             ->route('creator.posts.edit', $post)
             ->with('success', 'Post updated successfully.');
     }
+
+    public function authUserPostsDelete(Post $post)
+    {        
+        $post->delete();
+
+        // Store a flash message for SweetAlert success toast
+        return redirect()->route('creator.posts.list')
+            ->with('success', 'Post deleted successfully.');
+    }
+
 }

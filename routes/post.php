@@ -11,6 +11,7 @@ Route::prefix('creator')->middleware(['auth', 'role:creator'])->group(function (
     Route::post('/posts/store', [PostController::class, 'authUserPostsStore'])->name('creator.posts.store');
     Route::get('/posts/{id}/edit', [PostController::class, 'authUserPostsEdit'])->name('creator.posts.edit');
     Route::put('/posts/{post}/update', [PostController::class, 'authUserPostsUpdate'])->name('creator.posts.update');
+    Route::delete('/posts/{post}', [PostController::class, 'authUserPostsDelete'])->name('creator.posts.delete');
 });
 
 

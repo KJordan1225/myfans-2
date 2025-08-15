@@ -18,15 +18,17 @@
                     </a>
                     <br>
                     <br>
-                    @if(session('success'))
-                        <div class="alert alert-success">{{ session('success') }}</div>
-                    @endif
-
+                    <div>
+                        <p>
+                            To edit a post - delete it and resubmit it
+                        </p>
+                    </div>
+                    <br>
                     @if($posts->isEmpty())
                         <div class="alert alert-info text-center">
                             No posts found for this creator.
                         </div>
-                    @else
+                    @else                        
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped align-middle" id="postsTable">
                                 <thead class="table-dark">
@@ -42,19 +44,18 @@
                                             <td>{{ $post->id }}</td>
                                             <td>{{ $post->title }}</td>
                                             <td class="text-center">
-                                                <a href="{{ route('creator.posts.edit', $post->id) }}" 
+                                                <!-- <a href="{{ route('creator.posts.edit', $post->id) }}" 
                                                     class="btn btn-sm btn-warning me-1">
                                                     Edit
-                                                </a>
-
-
-                                                <form action="#" method="POST" class="d-inline-block" onsubmit="return confirm('Are you sure?');">
+                                                </a> -->
+                                                {{-- Delete button (with confirmation) --}}
+                                                <form action="{{ route('creator.posts.delete', $post) }}" method="POST" class="d-inline delete-post-form" onsubmit="return confirm('Are you sure?');">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-sm btn-danger me-1">Delete</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm delete-btn">Delete</button>
                                                 </form>
 
-                                                <a href="#" class="btn btn-sm btn-info">Media</a>
+                                                
                                             </td>
                                         </tr>
                                     @endforeach
@@ -87,4 +88,5 @@
         });
     });
 </script>
+
 @endpush
