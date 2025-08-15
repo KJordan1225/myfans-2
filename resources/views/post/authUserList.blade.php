@@ -13,7 +13,7 @@
 
                     <h2 class="mb-4">All Posts</h2>
                     <br>
-                    <a href="#" class="btn btn-primary">
+                    <a href="{{ route('creator.posts.create') }}" class="btn btn-primary">
                         <i class="bi bi-plus-lg"></i> Create New Post
                     </a>
                     <br>
