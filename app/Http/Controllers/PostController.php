@@ -38,6 +38,7 @@ class PostController extends Controller
             'user_id' => auth()->id(),
             'title' => $request->title,
             'body' => $request->body,
+            'media_type' => $request->media_type,
             'price' => $request->price,
             'is_paid' => $request->boolean('is_paid'),
             'visibility' => $request->visibility,
