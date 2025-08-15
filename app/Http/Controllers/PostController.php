@@ -47,7 +47,11 @@ class PostController extends Controller
             $post->addMediaFromRequest('video')->toMediaCollection('videos');
         }
 
-
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $post->addMedia($image)->toMediaCollection('images');
+            }
+        }
 
         return redirect()->route('creator.posts.create')
                      ->with('success', 'Post created! Now upload media.');
@@ -90,6 +94,12 @@ class PostController extends Controller
             // appends another video; if you want to replace, clear first:
             // $post->clearMediaCollection('videos');
             $post->addMediaFromRequest('video')->toMediaCollection('videos');
+        }
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $post->addMedia($image)->toMediaCollection('images');
+            }
         }
 
 

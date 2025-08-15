@@ -57,6 +57,9 @@
                             @enderror
                         </div>
 
+
+
+
                         <div class="mb-3">
                             <label class="form-label">Upload MP4 video</label>
                             <input type="file"
@@ -65,6 +68,25 @@
                                 accept="video/mp4,video/quicktime">
                             <small class="text-muted">Max ~50MB (adjust in validation)</small>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Gallery Images (multiple)</label>
+                            <input class="form-control" type="file" name="images[]" accept="image/*" multiple>
+                            @if(isset($post))
+                                <div class="d-flex flex-wrap gap-2 mt-2">
+                                    @foreach($post->getMedia('images') as $media)
+                                        <div class="border rounded p-2">
+                                            <img src="{{ $media->getUrl('thumb') }}" class="rounded" style="width:120px;height:auto;">
+                                            <form action="{{ route('posts.media.destroy', [$post, $media->id]) }}" method="POST" class="mt-2">
+                                                @csrf @method('DELETE')
+                                                <button class="btn btn-sm btn-outline-danger">Remove</button>
+                                            </form>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+
 
 
 

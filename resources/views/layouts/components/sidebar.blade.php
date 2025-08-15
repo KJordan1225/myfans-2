@@ -44,7 +44,12 @@
             </button>
             <div class="collapse {{ request()->routeIs('admin.subcategories.index') || request()->routeIs('admin.subcategories.create') || request()->routeIs('admin.subcategories.edit') ? 'show' : ''}}" id="subcategory-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-                    <li>
+                    <li>                        
+                        <a href="#" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                           <i class="fas fa-layer-group me-1"></i> List Posts
+                        </a>
+                    </li>
+                    <li>                        
                         <a href="{{ route('creator.posts.create') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
                            <i class="fas fa-layer-group me-1"></i> Create Post
                         </a>
@@ -52,6 +57,11 @@
                     <li>
                         <a href="#" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
                            <i class="fas fa-list me-1"></i> Create Subscription
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                           <i class="fas fa-list me-1"></i> Edit Subscription
                         </a>
                     </li>                    
                 </ul>

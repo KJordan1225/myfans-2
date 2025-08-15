@@ -37,6 +37,9 @@ class Post extends Model implements HasMedia
         // Multiple attachments (images, pdfs, etc.)
         $this->addMediaCollection('attachments');
 
+        // gallery (multiple images)
+        $this->addMediaCollection('images')->useDisk('public');
+
         // Allow multiple MP4s per post (public disk by default)
         $this->addMediaCollection('videos')
             ->useDisk('public')	

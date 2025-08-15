@@ -55,16 +55,39 @@
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
                         </div>
+						
+						
+						
+						{{-- Media Type --}}
+						<div class="mb-3">
+							<label for="mediaType" class="form-label">Media Upload Type</label>
+							<select id="mediaType" name="media_type" class="form-select">
+								<option value="">-- Select --</option>
+								<option value="image" {{ old('media_type') === 'image' ? 'selected' : '' }}>Image</option>
+								<option value="video" {{ old('media_type') === 'video' ? 'selected' : '' }}>Video</option>
+							</select>							
+						</div>
+						
 
-                        <div class="mb-3">
-                            <label class="form-label">Upload MP4 video</label>
-                            <input type="file"
-                                name="video"
-                                id="video"
-                                class="form-control"
-                                accept="video/mp4,video/quicktime">
-                            <small class="text-muted">Max ~50MB (adjust in validation)</small>
-                        </div>
+						{{-- Video upload --}}
+						<div class="mb-3" id="videoGroup" style="display:none;">
+							<label for="video" class="form-label">Upload Video</label>
+							<input type="file" id="video" name="video" class="form-control" accept="video/mp4,video/quicktime" disabled>
+							<small class="text-muted">Max ~50MB. Accepts mp4 and qucktime.</small>
+						</div>
+
+						
+						{{-- Image upload --}}
+						<div class="mb-3" id="imageGroup" style="display:none;">
+							<label for="image" class="form-label">Upload Image</label>
+							<input type="file" id="image" name="image" class="form-control" accept="image/*" disabled>
+						</div>
+
+
+
+
+
+
 
                         {{-- Price --}}
                         <div class="mb-3">
@@ -114,3 +137,55 @@
       </div>
     </div>
 @endsection
+
+
+
+@push('scripts')
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const selectEl   = document.getElementById('mediaType');
+    const imageGroup = document.getElementById('imageGroup');
+    const videoGroup = document.getElementById('videoGroup');
+    const imageInput = document.getElementById('image');
+    const videoInput = document.getElementById('video');
+
+    function toggleVisibility(value) {
+        if (value === 'image') {
+            imageGroup.style.display = 'block';
+            imageInput.disabled = false;
+            imageInput.required = true;
+
+            videoGroup.style.display = 'none';
+            videoInput.disabled = true;
+            videoInput.required = false;
+            videoInput.value = '';
+        } else if (value === 'video') {
+            videoGroup.style.display = 'block';
+            videoInput.disabled = false;
+            videoInput.required = true;
+
+            imageGroup.style.display = 'none';
+            imageInput.disabled = true;
+            imageInput.required = false;
+            imageInput.value = '';
+        } else {
+            // Nothing selected
+            imageGroup.style.display = 'none';
+            videoGroup.style.display = 'none';
+            imageInput.disabled = true; imageInput.required = false; imageInput.value = '';
+            videoInput.disabled = true; videoInput.required = false; videoInput.value = '';
+        }
+    }
+
+    // Change handler
+    selectEl.addEventListener('change', function () {
+        toggleVisibility(this.value);
+    });
+
+    // Initialize on load (preserves old selection after validation errors)
+    toggleVisibility(selectEl.value);
+});
+</script>
+
+@endpush
