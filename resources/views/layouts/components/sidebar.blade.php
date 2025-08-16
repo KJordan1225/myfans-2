@@ -59,7 +59,7 @@
                            <i class="fas fa-list me-1"></i> Edit Subscription
                         </a>
                     </li>                    
-                </ul>
+                </ul>                
             </div>
         </li>
         <li class="mb-1">
@@ -80,7 +80,12 @@
                     </li>
                 </ul>
             </div>
-        </li>
-       
+        </li>       
     </ul>
+
+    <div>
+        Logged in as: {{ auth()->user()->name }}
+    </div>
+
 </div>
+

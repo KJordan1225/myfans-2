@@ -72,6 +72,15 @@
 			@endif
 	</div>
 
+	<div>
+		<form method="POST" action="{{ route('subscriptions.subscribe', $subscription) }}">
+			@csrf
+			<button type="submit" class="btn btn-primary">
+				Subscribe - {{$subscription->title}}-{{$subscription->price}}-{{$subscription->interval}}
+			</button>
+		</form>
+	</div>
+
 	<div class="mt-4">
 		<p>{{ $postCount }} Posts</p>
 	</div>

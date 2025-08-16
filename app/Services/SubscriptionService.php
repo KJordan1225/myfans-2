@@ -66,7 +66,7 @@ class SubscriptionService
             ]);
 
             // Optional domain event
-            event(new \App\Events\SubscriptionStarted($subscriber->id, $subscription->id));
+            // event(new \App\Events\SubscriptionStarted($subscriber->id, $subscription->id));
         });
     }
 

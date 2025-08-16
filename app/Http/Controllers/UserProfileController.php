@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\User;
 use App\Models\UserProfile;
 use Illuminate\Support\Str;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -188,12 +189,16 @@ class UserProfileController extends Controller
         // Optionally load other data: posts, subscriptions, etc.
         $posts = Post::where('user_id', $user->id)->get();
         $postCount = $posts->count();
-
+        $subscription = $user->ownedSubscription;
+        
+        
+        
         return view('profile.public', [
             'user' => $user,
             'profile' => $profile,
             'posts' => $posts,
             'postCount' => $postCount,
+            'subscription' => $subscription,
         ]);
     }
 
