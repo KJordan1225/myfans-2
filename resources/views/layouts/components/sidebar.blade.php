@@ -50,8 +50,8 @@
                         </a>
                     </li>                    
                     <li>
-                        <a href="#" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
-                           <i class="fas fa-list me-1"></i> Create Subscription
+                        <a href="{{ route('creator.subscription.show') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                           <i class="fas fa-list me-1"></i> Show Subscription Plan
                         </a>
                     </li>
                     <li>
