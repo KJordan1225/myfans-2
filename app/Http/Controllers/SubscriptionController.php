@@ -23,7 +23,7 @@ class SubscriptionController extends Controller
 
         $active = $this->service->subscriberActiveSubscriptions($user);
         // Optionally eager-load creator for card rendering
-        $active->load(['creator:id,name', 'creator.creatorProfile:id,user_id,display_name,slug']);
+        $active->load(['creator:id,name', 'creator.profile:id,user_id,display_name']);
 
         return view('subscriptions.index', [
             'subscriptions' => $active,
