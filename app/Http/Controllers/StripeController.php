@@ -87,6 +87,8 @@ class StripeController extends Controller
 
         $user->assignRole('creator');
 
+        // Create creator_profile record
+
         return view('creator.stripe.success');
     }
     
