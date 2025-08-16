@@ -68,4 +68,31 @@ class User extends Authenticatable
     {
         return $this->hasMany(Post::class);
     }
+
+     /**
+     * As a creator: the one subscription plan this user owns.
+     * (A creator can only create one subscription.)
+     */
+    public function ownedSubscription()
+    {
+        return $this->hasOne(Subscription::class, 'creator_id');
+    }
+
+    /**
+     * As a subscriber: all subscriptions the user has purchased.
+     * (Users can subscribe to many subscriptions.)
+     */
+    public function subscriptions()
+    {
+        return $this->belongsToMany(Subscription::class, 'subscription_user')
+            ->withPivot(['starts_at','ends_at','status','is_active','provider','provider_subscription_id','price_snapshot'])
+            ->withTimestamps();
+    }
+
+    /** Convenience scope */
+    public function activeSubscriptions()
+    {
+        return $this->subscriptions()->wherePivot('is_active', true)->wherePivot('status', 'active');
+    }
+
 }

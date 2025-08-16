@@ -85,9 +85,7 @@ class StripeController extends Controller
         $userProfile->processing_paid = true;
         $userProfile->save();
 
-        $user->assignRole('creator');
-
-        // Create creator_profile record
+        $user->assignRole('creator');        
 
         return view('creator.stripe.success');
     }
@@ -95,5 +93,5 @@ class StripeController extends Controller
     public function cancel()
     {
         return view('creator.stripe.cancel');
-    }
+    }        
 }
