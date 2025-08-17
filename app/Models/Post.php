@@ -39,11 +39,16 @@ class Post extends Model implements HasMedia
         $this->addMediaCollection('attachments');
 
         // gallery (multiple images)
-        $this->addMediaCollection('images')->useDisk('public');
+        $this->addMediaCollection('images')
+            ->useDisk('public')
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
+            ->singleFile()
+            ->withResponsiveImages();
 
         // Allow multiple MP4s per post (public disk by default)
         $this->addMediaCollection('videos')
             ->useDisk('public')	
-            ->acceptsMimeTypes(['video/mp4', 'video/quicktime']); // adjust if needed
+            ->acceptsMimeTypes(['video/mp4', 'video/quicktime'])
+            ->singleFile();
     }
 }

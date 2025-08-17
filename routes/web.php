@@ -17,7 +17,10 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/@{username}', [UserProfileController::class, 'showByUsername'])
     ->where('username', '[A-Za-z0-9_-]+')
-    ->name('profile.public');    
+    ->name('profile.public');
+    
+    Route::get('/post-detail/{post}', [UserProfileController::class, 'showByUsernamePostDetail'])
+        ->name('profile.public.post-detail');
 });
 
 require __DIR__.'/auth.php';

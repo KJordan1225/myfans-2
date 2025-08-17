@@ -10,10 +10,16 @@ use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Services\SubscriptionService;
 
 class UserProfileController extends Controller
 {
-	/**
+	
+    public function __construct(
+        protected SubscriptionService $service
+    ) {}
+    
+    /**
 	 * User Profile functions.
 	 * Accessible by users w/creator privileges
 	 */
@@ -202,5 +208,14 @@ class UserProfileController extends Controller
         ]);
     }
 
-    
-}
+    public function showByUsernamePostDetail(Request $request, Post $post)
+    {
+        $subscriber = $request->user();
+        $subscription = $post->user->ownedSubscription;        
+        $isSubscribed = $this->service->isSubscribed($subscriber, $subscription);
+
+        return view('profile.post-detail', compact('post', 'isSubscribed', 'subscription'));
+    }
+
+}    
+

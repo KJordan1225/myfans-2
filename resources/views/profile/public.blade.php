@@ -107,7 +107,7 @@
             <div class="card-body">
                 <h5 class="card-title">{{ $item['title'] }}</h5>
                 <p class="card-text">{{ Str::limit($item['body'], 100) }}</p>
-                <a href="#" class="btn btn-primary">Read More</a>
+                <a href="{{ route('profile.public.post-detail', $item) }}" class="btn btn-primary">Read More</a>
             </div>
         </div>
     @endforeach

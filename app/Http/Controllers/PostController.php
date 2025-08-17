@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\Post\StorePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
 
@@ -45,13 +46,13 @@ class PostController extends Controller
         ]);
 
         if ($request->hasFile('video')) {
-            $post->addMediaFromRequest('video')->toMediaCollection('videos');
+            $post->addMediaFromRequest('video')
+                ->toMediaCollection('videos');
         }
 
-        if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $image) {
-                $post->addMedia($image)->toMediaCollection('images');
-            }
+        if ($request->hasFile('image')) {
+            $post->addMediaFromRequest('image')
+                ->toMediaCollection('images');
         }
 
         return redirect()->route('creator.posts.create')
