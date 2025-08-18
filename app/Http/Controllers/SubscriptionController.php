@@ -114,7 +114,7 @@ class SubscriptionController extends Controller
         // Optional policy: $this->authorize('viewSubscribers', $creator);
 
         $subscribers = $this->service->creatorActiveSubscribers($creator)
-            ->load('creatorProfile:id,user_id,display_name,slug');
+            ->load('profile:id,user_id,display_name');
 
         return view('creator.subscription.subscribers', [
             'subscribers' => $subscribers,

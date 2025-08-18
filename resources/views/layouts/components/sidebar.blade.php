@@ -55,8 +55,8 @@
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
-                           <i class="fas fa-list me-1"></i> Edit Subscription
+                        <a href="{{ route('creator.subscription.subscribers') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                           <i class="fas fa-list me-1"></i>List Subscribers
                         </a>
                     </li>                    
                 </ul>                
