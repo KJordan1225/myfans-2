@@ -28,14 +28,14 @@
                 @php
                     $creator = $subscription->creator;
                     $profile = $creator?->creatorProfile;
-                    $pivot   = $subscription->pivot ?? null; // starts_at, ends_at, status, is_active, price_snapshot
+                    $pivot   = $subscription->pivot ?? null; 
                     $active  = $pivot && $pivot->is_active && $pivot->status === 'active' && (empty($pivot->ends_at) || \Illuminate\Support\Carbon::parse($pivot->ends_at)->isFuture());
                 @endphp
 
                 <div class="rounded border bg-white shadow-sm overflow-hidden">
                     <div class="p-4 border-b bg-gray-50">
                         <div class="flex items-center gap-3">
-                            {{-- Avatar (if using paths or media library) --}}
+                            {{-- Avatar --}}
                             <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
                                 @if($profile?->avatar_path)
                                     <img src="{{ asset('storage/' . $profile->avatar_path) }}" alt="Avatar" class="w-full h-full object-cover">
@@ -76,9 +76,9 @@
 
                             <div class="text-right">
                                 @if($active)
-                                    <form method="POST" action="{{ route('subscriptions.cancel', $subscription) }}">
+                                    <form method="POST" action="{{ route('subscriptions.cancel', $subscription) }}" class="cancel-form d-inline">
                                         @csrf
-                                        <button type="submit" class="btn btn-danger">
+                                        <button type="button" class="btn btn-danger cancel-btn">
                                             Cancel
                                         </button>
                                     </form>
@@ -93,14 +93,12 @@
                             </div>
                         </div>
 
-                        {{-- Optional: show the price actually paid at purchase time --}}
                         @if(!empty($pivot?->price_snapshot))
                             <div class="text-xs text-gray-500">
                                 You paid: ${{ number_format($pivot->price_snapshot, 2) }} (snapshot)
                             </div>
                         @endif
 
-                        {{-- Optional: provider id for support --}}
                         @if(!empty($pivot?->provider_subscription_id))
                             <div class="text-xs text-gray-400">
                                 Ref: #{{ \Illuminate\Support\Str::limit($pivot->provider_subscription_id, 14) }}
@@ -112,6 +110,39 @@
         </div>
     @endif
 </div>
+
+            </div>
+        </div>
+      </div>
+    </div>
+
+    {{-- SweetAlert2 script --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".cancel-btn").forEach(function(button) {
+                button.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    let form = this.closest("form");
+
+                    Swal.fire({
+                        title: "Are you sure?",
+                        text: "You are about to cancel this subscription.",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#d33",
+                        cancelButtonColor: "#3085d6",
+                        confirmButtonText: "Yes, cancel it!",
+                        cancelButtonText: "No, keep it"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 
 
             </div>
