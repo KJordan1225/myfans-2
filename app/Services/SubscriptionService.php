@@ -92,7 +92,7 @@ class SubscriptionService
 
             $subscriber->subscriptions()->updateExistingPivot($subscription->id, $update);
 
-            event(new \App\Events\SubscriptionCanceled($subscriber->id, $subscription->id));
+            // event(new \App\Events\SubscriptionCanceled($subscriber->id, $subscription->id));
         });
     }
 
@@ -119,7 +119,7 @@ class SubscriptionService
 
             $subscriber->subscriptions()->updateExistingPivot($subscription->id, $update);
 
-            event(new \App\Events\SubscriptionResumed($subscriber->id, $subscription->id));
+            // event(new \App\Events\SubscriptionResumed($subscriber->id, $subscription->id));
         });
     }
 
