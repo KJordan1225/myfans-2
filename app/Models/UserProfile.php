@@ -30,6 +30,12 @@ class UserProfile extends Model implements HasMedia
         'processing_paid',
         'stripe_id',
         'balance',
+        'stripe_account_id',
+        'stripe_charges_enabled',
+        'stripe_payouts_enabled',
+        'stripe_details_submitted',
+        'stripe_default_currency',
+        'stripe_requirements',
     ];
 
     // Cast fields to appropriate types
