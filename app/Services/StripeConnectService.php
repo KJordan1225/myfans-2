@@ -9,28 +9,28 @@ class StripeConnectService
 {
     public function __construct(private StripeClient $stripe) {}
 
-    public function ensureExpressAccount(User $user): string
+    public function ensureExpressAccount(UserProfile $profile): string
     {
-        if ($user->stripe_account_id) return $user->stripe_account_id;
+        if ($profile->stripe_account_id) return $profile->stripe_account_id;
 
         $acct = $this->stripe->accounts->create([
             'type' => 'express',
             'country' => 'US',
-            'email' => $user->email,
+            'email' => $profile->user->email,
             'capabilities' => [
                 'card_payments' => ['requested' => true],
                 'transfers'     => ['requested' => true],
             ],
-            'metadata' => ['user_id' => (string)$user->id],
+            'metadata' => ['user_id' => (string)$profile->user->id],
         ]);
 
-        $user->forceFill(['stripe_account_id' => $acct->id])->save();
+        $profile->forceFill(['stripe_account_id' => $acct->id])->save();
         return $acct->id;
     }
 
-    public function onboardingLink(User $user): string
+    public function onboardingLink(UserProfile $profile): string
     {
-        $accountId = $this->ensureExpressAccount($user);
+        $accountId = $this->ensureExpressAccount($profile);
 
         $link = $this->stripe->accountLinks->create([
             'account'     => $accountId,
@@ -42,16 +42,16 @@ class StripeConnectService
         return $link->url;
     }
 
-    public function dashboardLoginUrl(User $user): string
+    public function dashboardLoginUrl(UserProfile $profile): string
     {
-        if (!$user->stripe_account_id) $this->ensureExpressAccount($user);
-        $login = $this->stripe->accounts->createLoginLink($user->stripe_account_id);
+        if (!$profile->stripe_account_id) $this->ensureExpressAccount($profile);
+        $login = $this->stripe->accounts->createLoginLink($profile->stripe_account_id);
         return $login->url;
     }
 
-    public function fetchAccount(User $user)
+    public function fetchAccount(UserProfile $profile)
     {
-        if (!$user->stripe_account_id) return null;
-        return $this->stripe->accounts->retrieve($user->stripe_account_id, []);
+        if (!$profile->stripe_account_id) return null;
+        return $this->stripe->accounts->retrieve($profile->stripe_account_id, []);
     }
 }
