@@ -39,6 +39,7 @@ return [
     'stripe' => [
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
+        'application_fee_percent' => env('STRIPE_APPLICATION_FEE_PERCENT', 20),
     ],
 
 
