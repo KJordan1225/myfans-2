@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
-use Stripe\StripeClient;
 use App\Models\User;
+use Stripe\StripeClient;
+use App\Models\UserProfile;
 
 class StripeConnectService
 {

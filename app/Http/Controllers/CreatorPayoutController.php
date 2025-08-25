@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Services\StripeConnectService;
+use App\Models\UserProfile;
 
 class CreatorPayoutController extends Controller
 {
@@ -14,7 +15,7 @@ class CreatorPayoutController extends Controller
         $user = $request->user();
         $profile = $user->profile;
         abort_unless($profile->is_creator, 403);
-        $acct = $this->connect->fetchAccount($profile);
+        $acct = $this->connect->fetchAccount($user->profile);
 
         return view('creator.payouts.index', [
             'user'    => $profile,
