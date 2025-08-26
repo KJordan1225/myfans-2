@@ -64,7 +64,7 @@
             </div>
 
             <button id="pay-button" type="submit" class="btn btn-primary w-100">
-              Pay {{ number_format($defaultPrice, 2) }} to {{ $creator->name }}
+              Pay {{ number_format($defaultPrice, 2) }} to {{ $creator->display_name }}
             </button>
           </form>
 
@@ -74,6 +74,15 @@
     </div>
   </div>
 </div>
+
+ 
+            </div>
+        </div>
+      </div>
+    </div>
+@endsection
+
+@push('scripts')
 
 {{-- Stripe.js --}}
 <script src="https://js.stripe.com/v3/"></script>
@@ -98,7 +107,7 @@
   // Reflect amount on the button label
   amountInput.addEventListener('input', () => {
     const v = parseFloat(amountInput.value || '0').toFixed(2);
-    payBtn.textContent = `Pay ${v} to {{ $creator->name }}`;
+    payBtn.textContent = `Pay ${v} to {{ $creator->display_name }}`;
   });
 
   // Basic front-end validation
@@ -176,10 +185,4 @@
 })();
 </script>
 
-
- 
-            </div>
-        </div>
-      </div>
-    </div>
-@endsection
+@endpush

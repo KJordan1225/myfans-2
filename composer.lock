@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "beb63d4f0a0d7ec66b80764074ad7089",
+    "content-hash": "6f14cf8e6dcb988aa98bc584a134e6fb",
     "packages": [
         {
             "name": "brick/math",
@@ -4011,20 +4011,23 @@
         },
         {
             "name": "sweetalert2/laravel",
-            "version": "0.1.0",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sweetalert2/sweetalert2-laravel.git",
-                "reference": "dc4d153a767cbfeb698e1288ce30b6359d009716"
+                "reference": "4223eddadf2f65e7a216b1bdf2b9b3a645b63496"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sweetalert2/sweetalert2-laravel/zipball/dc4d153a767cbfeb698e1288ce30b6359d009716",
-                "reference": "dc4d153a767cbfeb698e1288ce30b6359d009716",
+                "url": "https://api.github.com/repos/sweetalert2/sweetalert2-laravel/zipball/4223eddadf2f65e7a216b1bdf2b9b3a645b63496",
+                "reference": "4223eddadf2f65e7a216b1bdf2b9b3a645b63496",
                 "shasum": ""
             },
             "require": {
                 "laravel/framework": "^11.0 || ^12.0"
+            },
+            "suggest": {
+                "livewire/livewire": "Required to have the WithSweetAlert trait use Livewire events to show popups on Livewire updates."
             },
             "type": "library",
             "extra": {
@@ -4046,9 +4049,9 @@
             "description": "Official SweetAlert2 integration for Laravel framework",
             "support": {
                 "issues": "https://github.com/sweetalert2/sweetalert2-laravel/issues",
-                "source": "https://github.com/sweetalert2/sweetalert2-laravel/tree/0.1.0"
+                "source": "https://github.com/sweetalert2/sweetalert2-laravel/tree/1.0.0"
             },
-            "time": "2025-04-23T06:44:32+00:00"
+            "time": "2025-08-24T12:37:05+00:00"
         },
         {
             "name": "symfony/clock",
