@@ -68,6 +68,21 @@
             </button>
           </form>
 
+          <form action="{{ route('subscriptions.subscribe', $subscription) }}" 
+              method="POST" 
+              class="d-inline"
+              style="display:none;"
+          >
+              @csrf
+              <button type="submit" 
+                class="btn btn-primary"
+                style="opacity:0;"
+                id="btn2"
+              >
+                  Subscribe
+              </button>
+          </form>         
+
         </div>
       </div>
 
@@ -98,6 +113,7 @@
   const amountInput = document.getElementById('amount');
   const creatorId = document.getElementById('creator_id').value;
   const cardErrors = document.getElementById('card-errors');
+  const btn2 = document.getElementById('btn2');
 
   // Helper: show toast
   function toast(icon, title) {
@@ -168,8 +184,9 @@
 
       if (paymentIntent && paymentIntent.status === 'succeeded') {
         toast('success', 'Payment successful!');
+        btn2.click();
         // TODO: Optionally redirect to a “thank you” page or refresh
-        setTimeout(() => window.location.reload(), 800);
+        setTimeout(() => window.location.reload(), 800);        
       } else {
         toast('warning', 'Payment processing. Please check your email/statement.');
         setTimeout(() => window.location.reload(), 1200);

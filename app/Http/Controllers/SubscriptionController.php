@@ -67,7 +67,6 @@ class SubscriptionController extends Controller
     public function subscribe(Request $request, Subscription $subscription)
     {
         $subscriber = $request->user();
-
         // Optional policy: $this->authorize('subscribe', [$subscriber, $subscription]);
         $this->service->subscribe($subscriber, $subscription, now(), [
             'provider'                 => 'stripe', // or null if offline

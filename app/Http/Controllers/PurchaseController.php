@@ -16,6 +16,8 @@ class PurchaseController extends Controller
         // Publishable key for Stripe.js
         $pk = config('services.stripe.key');
 		$percent = config('services.stripe.application_fee_amount');
+        $user = $creator->user;
+        $subscription = $user->ownedSubscription;
         
         return view('purchase.checkout', [
             'creator' => $creator,
@@ -25,6 +27,7 @@ class PurchaseController extends Controller
             // Your fee model (example: 15% platform fee, min $0.50)
             'platformFeePercent' => 20,
             'platformFeeMin' => 0.50,
+            'subscription' => $subscription,
         ]);
     }
 
