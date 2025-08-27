@@ -58,6 +58,11 @@
                         <a href="{{ route('creator.subscription.subscribers') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
                            <i class="fas fa-list me-1"></i>List Subscribers
                         </a>
+                    </li> 
+                    <li>
+                        <a href="{{ route('creator.payouts.index') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                           <i class="fas fa-list me-1"></i>Onboard Stripe Account
+                        </a>
                     </li>                    
                 </ul>                
             </div>

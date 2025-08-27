@@ -11,9 +11,8 @@ class PurchaseController extends Controller
     public function __construct(private StripeClient $stripe) {}
 
     public function show(UserProfile $creator, Request $request)
-    {
+    {        
         abort_unless($creator->is_creator && $creator->stripe_account_id, 404);
-
         // Publishable key for Stripe.js
         $pk = config('services.stripe.key');
 		$percent = config('services.stripe.application_fee_amount');
