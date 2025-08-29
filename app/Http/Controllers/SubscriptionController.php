@@ -6,6 +6,7 @@ use Stripe\Stripe;
 use Stripe\StripeClient;
 use App\Models\Subscription;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Services\SubscriptionService;
 use App\Http\Requests\Creator\UpsertSubscriptionRequest;
@@ -56,6 +57,32 @@ class SubscriptionController extends Controller
     public function creatorStoreOrUpdate(UpsertSubscriptionRequest $request)
     {
         $creator = $request->user();
+        
+        $stripe = new StripeClient(config('services.stripe.secret'));   
+        $userProfile = Auth::user()->profile;
+        $subscription = Auth::user()->ownedSubscription;
+        
+        // Create a product
+        $product = $stripe->products->create([
+            'name' => 'Subscription for ' . $userProfile->display_name,
+            'description' => 'Recurring subscription fee to supprt ' . $userProfile->display_name,
+        ]);
+        
+        // Create a price for the product
+        $price = $stripe->prices->create([
+            'unit_amount' => $subscription->price*100, // in cents
+            'currency' => 'usd',
+            'recurring' => ['interval' => 'month'],
+            'product' => $product->id,
+        ]);
+        
+        // Store $price->id for this creator/tier
+        DB::table('creator_prices')->insert([
+            'creator_id'      => $creator->id,
+            'stripe_price_id' => $price->id,
+            'display_name'    => 'Monthly',
+            'amount'          => $subscription->price*100, // in cents
+        ]);
 
         // Optional policy: $this->authorize('manageOwnPlan', $creator);
         $subscription = $this->service->createOrUpdateCreatorSubscription($creator, $request->validated());
@@ -89,6 +116,8 @@ class SubscriptionController extends Controller
 
         // Optional policy: $this->authorize('cancel', [$subscriber, $subscription]);
         $this->service->cancel($subscriber, $subscription);
+
+        $productAndPrice = $this->createProductAndPrice();
 
         return back()->with('success', 'Subscription canceled.');
     }
@@ -126,7 +155,7 @@ class SubscriptionController extends Controller
     public function createProductAndPrice()
     {
         $stripe = new StripeClient(config('services.stripe.secret'));
-        
+       
         $userProfile = Auth::user()->profile;
         $subscription = Auth::user()->ownedSubscription;
         

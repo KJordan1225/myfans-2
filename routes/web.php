@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\CreatorSubscribePageController;
 use App\Http\Controllers\ConnectSubscriptionCheckoutController;
 
 Route::get('/', function () {
@@ -25,13 +26,13 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth'])->group(function () {
-    Route::post('/creators/{creator}/subscribe/checkout', [ConnectSubscriptionCheckoutController::class, 'start'])
+    Route::post('/creator/{creator}/subscribe/checkout', [ConnectSubscriptionCheckoutController::class, 'start'])
         ->whereNumber('creator')
-        ->name('creators.subscribe.checkout');
+        ->name('creator.subscribe.checkout');
 });
 
 Route::get('/creators/{creator}/subscribe', [CreatorSubscribePageController::class, 'show'])
     ->middleware(['auth'])
-    ->name('creators.subscribe.page');
+    ->name('creator.subscribe.page');
 
 require __DIR__.'/auth.php';

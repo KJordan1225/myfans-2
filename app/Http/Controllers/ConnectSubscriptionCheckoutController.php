@@ -2,34 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use Stripe\StripeClient;
+use App\Models\UserProfile;
 use Illuminate\Http\Request;
 use App\Models\User; // creator
 use Illuminate\Support\Facades\DB;
-use Stripe\StripeClient;
 
 
 class ConnectSubscriptionCheckoutController extends Controller
 {
     public function __construct(private StripeClient $stripe) {}
 
-    public function start(Request $request, User $creator)
+    public function start(Request $request, UserProfile $creator)
     {
         $request->validate([
             'price_id' => ['required', 'string'],
         ]);
-
+     
         abort_unless($creator->is_creator && $creator->stripe_account_id, 404);
-
-        // ✅ Security: ensure price_id actually belongs to this creator
-        $allowed = DB::table('creator_prices')
-            ->where('creator_id', $creator->id)
-            ->where('stripe_price_id', $request->price_id)
-            ->exists();
-
-        abort_unless($allowed, 422, 'Invalid plan for this creator.');
-
+        
         // Ensure buyer has a platform Customer
-        $buyer = $request->user();
+        $buyer = $request->user()->profile;
         if (!$buyer->stripe_customer_id) {
             $customer = $this->stripe->customers->create([
                 'email'    => $buyer->email,
