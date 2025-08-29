@@ -15,7 +15,7 @@
 
       <div class="card shadow-sm">
         <div class="card-header">
-          <h5 class="mb-0">Support {{ $creator->name }}</h5>
+          <h5 class="mb-0">Support {{ $creator->display_name }}</h5>
         </div>
         <div class="card-body">
 
@@ -50,7 +50,7 @@
             <div class="mb-3">
               <label for="amount" class="form-label">Amount (USD)</label>
               <input type="number" step="0.01" min="0.50" max="9999" id="amount" class="form-control"
-                     value="{{ number_format($defaultPrice, 2, '.', '') }}" required>
+                     value="{{ number_format($subscription->price, 2, '.', '') }}" required readonly>
               <div class="form-text">
                 Platform fee: {{ $platformFeePercent }}% (min ${{ number_format($platformFeeMin, 2) }})
               </div>
@@ -64,7 +64,7 @@
             </div>
 
             <button id="pay-button" type="submit" class="btn btn-primary w-100">
-              Pay {{ number_format($defaultPrice, 2) }} to {{ $creator->display_name }}
+              Pay {{ number_format($subscription->price, 2) }} to {{ $creator->display_name }}
             </button>
           </form>
 

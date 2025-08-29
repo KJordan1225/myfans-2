@@ -36,6 +36,7 @@ class UserProfile extends Model implements HasMedia
         'stripe_details_submitted',
         'stripe_default_currency',
         'stripe_requirements',
+        'stripe_customer_id',
     ];
 
     // Cast fields to appropriate types
