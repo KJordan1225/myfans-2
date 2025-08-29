@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserProfileController;
+use App\Http\Controllers\ConnectSubscriptionCheckoutController;
 
 Route::get('/', function () {
     return view('welcome'); 
@@ -22,5 +23,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/post-detail/{post}', [UserProfileController::class, 'showByUsernamePostDetail'])
         ->name('profile.public.post-detail');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::post('/creators/{creator}/subscribe/checkout', [ConnectSubscriptionCheckoutController::class, 'start'])
+        ->whereNumber('creator')
+        ->name('creators.subscribe.checkout');
+});
+
+Route::get('/creators/{creator}/subscribe', [CreatorSubscribePageController::class, 'show'])
+    ->middleware(['auth'])
+    ->name('creators.subscribe.page');
 
 require __DIR__.'/auth.php';

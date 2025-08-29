@@ -93,5 +93,6 @@ class StripeController extends Controller
     public function cancel()
     {
         return view('creator.stripe.cancel');
-    }        
+    } 
+        
 }
