@@ -9,6 +9,7 @@ use Stripe\Webhook;
 use Illuminate\Support\Facades\DB;
 use App\Models\Purchase;
 use App\Models\ProcessedStripeEvent;
+use App\Models\Subscription;
 
 
 class StripeWebhookController extends Controller
@@ -84,6 +85,23 @@ class StripeWebhookController extends Controller
                     break;
             }
         });
+		
+		$type = $event->type;
+        $data = $event->data->object;
+
+        if ($type === 'customer.subscription.updated') {
+            Subscription::where('stripe_subscription_id', $data->id)->update([
+                'status'               => $data->status,
+                'cancel_at_period_end' => (bool) $data->cancel_at_period_end,
+            ]);
+        }
+
+        if ($type === 'customer.subscription.deleted') {
+            Subscription::where('stripe_subscription_id', $data->id)->update([
+                'status'      => 'canceled',
+                'canceled_at' => now(),
+            ]);
+        }
 
         return response('OK', 200);
     }

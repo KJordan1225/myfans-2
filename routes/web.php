@@ -35,4 +35,6 @@ Route::get('/creators/{creator}/subscribe', [CreatorSubscribePageController::cla
     ->middleware(['auth'])
     ->name('creator.subscribe.page');
 
+Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handle']);
+
 require __DIR__.'/auth.php';
