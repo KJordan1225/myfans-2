@@ -12,6 +12,12 @@ class Subscription extends Model
         'description',
         'price',
         'interval',
+        'user_id',
+        'stripe_subscription_id',  // sub_***
+        'stripe_account_id',       // acct_*** (null if platform-managed)
+        'status',                  // active, canceled, past_due, etc.
+        'cancel_at_period_end',    // bool
+        'canceled_at',             // timestamp
     ];
 
     /**
