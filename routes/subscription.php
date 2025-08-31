@@ -11,8 +11,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('subscriptions.index'); // the user's active subs
     Route::post('/subscriptions/{subscription}/subscribe', [SubscriptionController::class, 'subscribe'])
         ->name('subscriptions.subscribe');
-    Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])
-        ->name('subscriptions.cancel');
+    // Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])
+    //     ->name('subscriptions.cancel');
     Route::post('/subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])
         ->name('subscriptions.resume');
 });

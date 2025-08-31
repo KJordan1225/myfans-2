@@ -41,6 +41,7 @@ class SubscriptionService
      * - Prevents self-subscription
      * - Prevents duplicate pivot rows (uses syncWithoutDetaching)
      * - Snapshots price
+     * - Also sets subscriptions.user_id = $subscriber->id (with concurrency safety)
      */
     public function subscribe(User $subscriber, Subscription $subscription, ?Carbon $startsAt = null, array $providerMeta = []): void
     {
@@ -51,24 +52,46 @@ class SubscriptionService
         }
 
         DB::transaction(function () use ($subscriber, $subscription, $startsAt, $providerMeta) {
+            // Lock the target subscription row to avoid concurrent claims
+            /** @var \App\Models\Subscription $sub */
+            $sub = Subscription::query()
+                ->whereKey($subscription->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            // If already linked to another user, block it
+            if (!is_null($sub->user_id) && (int) $sub->user_id !== (int) $subscriber->id) {
+                throw ValidationException::withMessages([
+                    'subscription' => 'This subscription is already linked to a different user.',
+                ]);
+            }
+
+            // Set/confirm ownership by this subscriber
+            if ((int) $sub->user_id !== (int) $subscriber->id) {
+                $sub->user_id = $subscriber->id;
+                $sub->save();
+            }
+
             $pivot = array_merge([
-                'starts_at'               => $startsAt?->toDateTimeString() ?? now(),
-                'ends_at'                 => null,
-                'status'                  => 'active',
-                'is_active'               => true,
-                'price_snapshot'          => $subscription->price,
-                'provider'                => $providerMeta['provider'] ?? null,
-                'provider_subscription_id'=> $providerMeta['provider_subscription_id'] ?? null,
+                'starts_at'                 => $startsAt?->toDateTimeString() ?? now(),
+                'ends_at'                   => null,
+                'status'                    => 'active',
+                'is_active'                 => true,
+                'price_snapshot'            => $sub->price, // snapshot plan price at subscribe time
+                'provider'                  => $providerMeta['provider'] ?? null,
+                'provider_subscription_id'  => $providerMeta['provider_subscription_id'] ?? null,
             ], $providerMeta);
 
+            // Attach or update pivot without detaching other subscriptions
             $subscriber->subscriptions()->syncWithoutDetaching([
-                $subscription->id => $pivot,
+                $sub->id => $pivot,
             ]);
 
-            // Optional domain event
-            // event(new \App\Events\SubscriptionStarted($subscriber->id, $subscription->id));
+            // Optional domain event after successful write
+            // event(new \App\Events\SubscriptionStarted($subscriber->id, $sub->id));
         });
     }
+
 
     /**
      * Cancel (soft) a subscription (keeps history).

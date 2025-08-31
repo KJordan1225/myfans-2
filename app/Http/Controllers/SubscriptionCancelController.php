@@ -15,8 +15,9 @@ class SubscriptionCancelController extends Controller
     // Safer “end-of-period” cancel (recommended UX)
     public function cancelAtPeriodEnd(Subscription $subscription, Request $request)
     {
+        dd($subscription);
         $this->authorizeFan($subscription);
-
+        
         $opts = $this->optsFor($subscription); // adds stripe_account when needed
 
         // Set cancel_at_period_end = true
@@ -25,12 +26,12 @@ class SubscriptionCancelController extends Controller
             ['cancel_at_period_end' => true],
             $opts + ['idempotency_key' => $this->idemKey($subscription, 'later')]
         );
-
+        
         $subscription->update([
             'cancel_at_period_end' => (bool) $sub->cancel_at_period_end,
             'status'               => $sub->status, // might still be 'active'
         ]);
-
+        
         return to_route('subscriptions.index')->with('success', 'Cancellation scheduled at period end.');
     }
 
@@ -58,7 +59,7 @@ class SubscriptionCancelController extends Controller
     }
 
     private function authorizeFan(Subscription $subscription): void
-    {
+    {       
         abort_unless($subscription->user_id === Auth::id(), 403);
     }
 
