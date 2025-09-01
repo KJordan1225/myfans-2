@@ -51,43 +51,73 @@ class SubscriptionService
             ]);
         }
 
-        DB::transaction(function () use ($subscriber, $subscription, $startsAt, $providerMeta) {
-            // Lock the target subscription row to avoid concurrent claims
+        // 1) Get creator's connected account (acct_...) from UserProfile
+        // Adjust relations if your naming differs.
+        $creatorProfile = $subscription->creator?->profile;   // User -> hasOne UserProfile
+        $accountId      = $creatorProfile?->stripe_account_id;
+       
+        // Optional: enforce that a connected account must exist
+        // if (! $accountId) {
+        //     throw ValidationException::withMessages([
+        //         'provider' => 'Creator is not onboarded to Stripe Connect.',
+        //     ]);
+        // }
+
+        DB::transaction(function () use ($subscriber, $subscription, $startsAt, $providerMeta, $accountId) {
             /** @var \App\Models\Subscription $sub */
             $sub = Subscription::query()
                 ->whereKey($subscription->id)
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            // If already linked to another user, block it
+            // 2) Prevent conflicting ownership
             if (!is_null($sub->user_id) && (int) $sub->user_id !== (int) $subscriber->id) {
                 throw ValidationException::withMessages([
                     'subscription' => 'This subscription is already linked to a different user.',
                 ]);
             }
 
-            // Set/confirm ownership by this subscriber
+            $dirty = false;
+
+            // 3) Ensure ownership by this subscriber
             if ((int) $sub->user_id !== (int) $subscriber->id) {
                 $sub->user_id = $subscriber->id;
+                $dirty = true;
+            }
+
+            // 4) Persist stripe_account_id from UserProfile (with mismatch guard)
+            if ($accountId) {
+                if ($sub->stripe_account_id && $sub->stripe_account_id !== $accountId) {
+                    throw ValidationException::withMessages([
+                        'subscription' => 'Connected account mismatch for this subscription.',
+                    ]);
+                }
+                if ($sub->stripe_account_id !== $accountId) {
+                    $sub->stripe_account_id = $accountId; // <-- write acct_... here
+                    $dirty = true;
+                }
+            }
+
+            if ($dirty) {
                 $sub->save();
             }
 
+            // 5) Build pivot payload (unchanged)
             $pivot = array_merge([
                 'starts_at'                 => $startsAt?->toDateTimeString() ?? now(),
                 'ends_at'                   => null,
                 'status'                    => 'active',
                 'is_active'                 => true,
-                'price_snapshot'            => $sub->price, // snapshot plan price at subscribe time
+                'price_snapshot'            => $sub->price,
                 'provider'                  => $providerMeta['provider'] ?? null,
                 'provider_subscription_id'  => $providerMeta['provider_subscription_id'] ?? null,
             ], $providerMeta);
 
-            // Attach or update pivot without detaching other subscriptions
+            // 6) Attach/update pivot without detaching other subscriptions
             $subscriber->subscriptions()->syncWithoutDetaching([
                 $sub->id => $pivot,
             ]);
 
-            // Optional domain event after successful write
             // event(new \App\Events\SubscriptionStarted($subscriber->id, $sub->id));
         });
     }
