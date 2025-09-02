@@ -2,56 +2,28 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Subscription extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
-        'creator_id',
-        'title',
-        'description',
-        'price',
-        'interval',
-        'user_id',
-        'stripe_subscription_id',  // sub_***
-        'stripe_account_id',       // acct_*** (null if platform-managed)
-        'status',                  // active, canceled, past_due, etc.
-        'cancel_at_period_end',    // bool
-        'canceled_at',             // timestamp
+        'subscriber_id','creator_id','creator_plan_id',
+        'stripe_subscription_id','stripe_customer_id','stripe_account_id','status',
+        'current_period_start','current_period_end','cancel_at_period_end',
     ];
 
-    /**
-     * The creator who owns this subscription (exactly one).
-     * (Subscriptions can only have one user as a creator.)
-     */
-    public function creator()
-    {
-        return $this->belongsTo(User::class, 'creator_id');
-    }
+    protected $casts = [
+        'current_period_start' => 'datetime',
+        'current_period_end'   => 'datetime',
+        'cancel_at_period_end' => 'boolean',
+    ];
 
-    /**
-     * Users who are subscribed to this subscription (many).
-     * (Subscriptions can have many users as subscribers.)
-     */
-    public function subscribers()
-    {
-        return $this->belongsToMany(User::class, 'subscription_user')
-            ->withPivot(['starts_at',
-							'ends_at',
-							'status',
-							'is_active',
-							'provider',
-							'provider_subscription_id',
-							'price_snapshot'])
-            ->withTimestamps();
-    }
-
-    /** Convenience scope */
-    public function activeSubscribers()
-    {
-        return $this->subscribers()
-			->wherePivot('is_active', true)
-			->wherePivot('status', 'active');
-    }
+    public function subscriber(): BelongsTo { return $this->belongsTo(User::class,'subscriber_id'); }
+    public function creator(): BelongsTo    { return $this->belongsTo(User::class,'creator_id'); }
+    public function plan(): BelongsTo       { return $this->belongsTo(CreatorPlan::class,'creator_plan_id'); }
 
 }

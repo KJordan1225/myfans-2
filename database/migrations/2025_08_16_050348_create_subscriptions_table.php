@@ -13,15 +13,20 @@ return new class extends Migration
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('subscriber_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('creator_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('creator_plan_id')->constrained('creator_plans')->cascadeOnDelete();
 
-            // the creator (a user) who owns this subscription plan
-            $table->foreignId('creator_id')->unique()->constrained('users')->cascadeOnDelete();
+            $table->string('stripe_subscription_id')->index();
+            $table->string('stripe_customer_id');
+            $table->string('stripe_account_id'); // destination connected account
+            $table->string('status'); // active, trialing, past_due, canceled, incomplete, paused
+            $table->timestamp('current_period_start')->nullable();
+            $table->timestamp('current_period_end')->nullable();
+            $table->boolean('cancel_at_period_end')->default(false);
 
-            $table->string('title')->default('Creator Plan');
-            $table->text('description')->nullable();
-            $table->decimal('price', 8, 2); // e.g. monthly price
-            $table->string('interval')->default('month'); // month, year (optional)
             $table->timestamps();
+            $table->unique(['subscriber_id','creator_id'], 'unique_subscriber_creator');
         });
 
     }
