@@ -11,12 +11,14 @@ Route::middleware(['auth'])->group(function () {
         ->name('subscriptions.index'); // the user's active subs
     Route::post('/subscriptions/{subscription}/subscribe', [SubscriptionController::class, 'subscribe'])
         ->name('subscriptions.subscribe');
-    // Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])
-    //     ->name('subscriptions.cancel');
     Route::post('/subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])
         ->name('subscriptions.resume');
 });
 
+Route::middleware('auth')->group(function () {
+    Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])
+        ->name('subscriptions.cancel');
+});
 
 Route::middleware(['auth', 'role:creator'])->group(function () {
     // Creator-facing (exactly one subscription per creator)

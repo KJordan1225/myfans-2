@@ -9,6 +9,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Spatie\Permission\Middleware\PermissionMiddleware;
 use Spatie\Permission\Middleware\RoleOrPermissionMiddleware;
 use Stripe\StripeClient;
+use App\Http\Middleware\VerifyStripeSignature;
 
 $app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -22,6 +23,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
             __DIR__.'/../routes/purchase.php',
             __DIR__.'/../routes/cancel_subscriptions.php',
             __DIR__.'/../routes/connect_onboarding.php',
+            __DIR__.'/../routes/checkout.php',
         ],
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
@@ -34,6 +36,7 @@ $app = Application::configure(basePath: dirname(__DIR__))
             'permission' => PermissionMiddleware::class,
             'role_or_permission' => RoleOrPermissionMiddleware::class,
         ]);
+        $middleware->append(VerifyStripeSignature::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

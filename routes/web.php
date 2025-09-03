@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\CreatorSubscribePageController;
 use App\Http\Controllers\ConnectSubscriptionCheckoutController;
+use App\Http\Controllers\PlanController;
 
 Route::get('/', function () {
     return view('welcome'); 
@@ -35,6 +36,7 @@ Route::get('/creators/{creator}/subscribe', [CreatorSubscribePageController::cla
     ->middleware(['auth'])
     ->name('creator.subscribe.page');
 
-Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handle']);
+Route::middleware('auth')->post('/plans', [PlanController::class, 'store'])
+    ->name('plans.store');
 
 require __DIR__.'/auth.php';

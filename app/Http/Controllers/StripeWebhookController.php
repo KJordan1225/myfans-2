@@ -2,109 +2,101 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\User;
-use App\Models\UserProfile;
-use Stripe\Webhook;
-use Illuminate\Support\Facades\DB;
-use App\Models\Purchase;
-use App\Models\ProcessedStripeEvent;
 use App\Models\Subscription;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Stripe\StripeClient;
+use Stripe\Webhook;
 
 class StripeWebhookController extends Controller
 {
+    public function __construct(private StripeClient $stripe) {}
+
     public function handle(Request $request)
     {
         $payload = $request->getContent();
-        $sig     = $request->header('Stripe-Signature');
-        $secret  = config('services.stripe.webhook_secret');
+        $sigHeader = $request->header('Stripe-Signature');
+        $secret = config('services.stripe.webhook_secret');
 
         try {
-            $event = \Stripe\Webhook::constructEvent($payload, $sig, $secret);
+            $event = Webhook::constructEvent($payload, $sigHeader, $secret);
         } catch (\Throwable $e) {
-            return response('Invalid', 400);
-        }
-        
-        // 1) If we’ve already processed this Stripe event id → exit fast
-        if (ProcessedStripeEvent::where('event_id', $event->id)->exists()) {
-            return response('OK', 200);
-        }	
-
-        // 2) Persist idempotency *and* perform fulfillment atomically
-        DB::transaction(function () use ($event) {
-            // Re-check inside the txn (race-proof)
-            if (ProcessedStripeEvent::where('event_id', $event->id)->lockForUpdate()->exists()) {
-                return; // another worker got it first
-            }
-
-            // Mark the event as seen now (so retries during this txn are no-ops)
-            ProcessedStripeEvent::create(['event_id' => $event->id]);
-
-            switch ($event->type) {
-                case 'payment_intent.succeeded':
-                    /** @var \Stripe\PaymentIntent $pi */
-                    $pi = $event->data->object;
-
-                    // Lock the purchase row to avoid concurrent updates
-                    $purchase = Purchase::where('payment_intent_id', $pi->id)->lockForUpdate()->first();
-
-                    if (!$purchase) {
-                        // Optional: create if you rely purely on webhook (no pre-row)
-                        // $purchase = Purchase::create([...]);
-                        return;
-                    }
-
-                    // 3) Idempotent exit if already fulfilled/succeeded
-                    if ($purchase->status === 'succeeded' && $purchase->fulfilled_at) {
-                        return; // already processed; do nothing
-                    }
-
-                    // (Optional) sanity checks to prevent mismatched PI usage:
-                    // if ($purchase->amount_cents !== $pi->amount || $purchase->currency !== $pi->currency) { ... }
-
-                    // 4) Perform your “once-only” side-effects here
-                    // e.g., grant access, create entitlements, send notifications, etc.
-
-                    // 5) Mark as succeeded/fulfilled	
-                    $purchase->update([
-                        'status'       => 'succeeded',
-                        'fulfilled_at' => now(),
-                        'meta'         => array_merge($purchase->meta ?? [], [
-                            'stripe_pi' => $pi->id,
-                            'charges'   => $pi->charges?->toArray(),
-                        ]),
-                    ]);
-                    break;
-
-                case 'payment_intent.payment_failed':	
-                    $pi = $event->data->object;
-                    Purchase::where('payment_intent_id', $pi->id)
-                        ->lockForUpdate()
-                        ->update(['status' => 'failed']);
-                    break;
-            }
-        });
-		
-		$type = $event->type;
-        $data = $event->data->object;
-
-        if ($type === 'customer.subscription.updated') {
-            Subscription::where('stripe_subscription_id', $data->id)->update([
-                'status'               => $data->status,
-                'cancel_at_period_end' => (bool) $data->cancel_at_period_end,
-            ]);
+            Log::warning('Stripe webhook signature failed', ['e' => $e->getMessage()]);
+            abort(400, 'Invalid signature');
         }
 
-        if ($type === 'customer.subscription.deleted') {
-            Subscription::where('stripe_subscription_id', $data->id)->update([
-                'status'      => 'canceled',
-                'canceled_at' => now(),
-            ]);
+        switch ($event->type) {
+            case 'checkout.session.completed':
+                $session = $event->data->object; // \Stripe\Checkout\Session
+                if ($session->mode === 'subscription') {
+                    $this->upsertSubscriptionFromSession($session->id);
+                }
+                break;
+
+            case 'customer.subscription.created':
+            case 'customer.subscription.updated':
+            case 'customer.subscription.deleted':
+                $sub = $event->data->object; // \Stripe\Subscription
+                $this->upsertSubscriptionFromStripeId($sub->id);
+                break;
+
+            case 'invoice.payment_succeeded':
+            case 'invoice.payment_failed':
+                // Optional: track invoices or notify users
+                break;
         }
 
-        return response('OK', 200);
+        return response()->json(['status' => 'ok']);
     }
 
-}
+    private function upsertSubscriptionFromSession(string $sessionId): void
+    {
+        $session = $this->stripe->checkout->sessions->retrieve($sessionId, [
+            'expand' => ['subscription', 'customer']
+        ]);
 
+        $subscription = $session->subscription; // expanded \Stripe\Subscription
+        $this->persistSubscription($subscription);
+    }
+
+    private function upsertSubscriptionFromStripeId(string $stripeSubscriptionId): void
+    {
+        $subscription = $this->stripe->subscriptions->retrieve($stripeSubscriptionId);
+        $this->persistSubscription($subscription);
+    }
+
+    private function persistSubscription($stripeSub): void
+    {
+        // Metadata set in subscription_data when creating Checkout session
+        $meta = $stripeSub->metadata ?? (object)[];
+        $creatorId    = (int) ($meta->creator_id ?? 0);
+        $subscriberId = (int) ($meta->subscriber_id ?? 0);
+        $planId       = (int) ($meta->plan_id ?? 0);
+
+        if (!$creatorId || !$subscriberId || !$planId) {
+            // As a fallback, you can look up by price/product if needed
+        }
+
+        Subscription::updateOrCreate(
+            [
+                'subscriber_id' => $subscriberId,
+                'creator_id'    => $creatorId,
+            ],
+            [
+                'creator_plan_id'       => $planId,
+                'stripe_subscription_id'=> $stripeSub->id,
+                'stripe_customer_id'    => $stripeSub->customer,
+                'stripe_account_id'     => optional($stripeSub->transfer_data)->destination ?? '',
+                'status'                => $stripeSub->status,
+                'current_period_start'  => $this->unixToTs($stripeSub->current_period_start ?? null),
+                'current_period_end'    => $this->unixToTs($stripeSub->current_period_end ?? null),
+                'cancel_at_period_end'  => (bool) ($stripeSub->cancel_at_period_end ?? false),
+            ]
+        );
+    }
+
+    private function unixToTs($unix)
+    {
+        return $unix ? now()->setTimestamp($unix) : null;
+    }
+}

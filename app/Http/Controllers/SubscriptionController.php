@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Services\SubscriptionService;
 use App\Http\Requests\Creator\UpsertSubscriptionRequest;
 
+
 class SubscriptionController extends Controller
 {
     public function __construct(
@@ -112,15 +113,17 @@ class SubscriptionController extends Controller
      */
     public function cancel(Request $request, Subscription $subscription)
     {
-        $subscriber = $request->user();
+        abort_unless($subscription->subscriber_id === Auth::id(), 403);
 
-        // Optional policy: $this->authorize('cancel', [$subscriber, $subscription]);
-        $this->service->cancel($subscriber, $subscription);
+        $this->stripe->subscriptions->update($subscription->stripe_subscription_id, [
+            'cancel_at_period_end' => true,
+        ]);
 
-        $productAndPrice = $this->createProductAndPrice();
+        $subscription->update(['cancel_at_period_end' => true]);
 
-        return back()->with('success', 'Subscription canceled.');
+        return back()->with('success', 'Your subscription will cancel at period end.');
     }
+
 
     /**
      * Subscriber action: resume a previously canceled subscription.
