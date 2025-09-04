@@ -6,6 +6,9 @@ use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\CreatorSubscribePageController;
 use App\Http\Controllers\ConnectSubscriptionCheckoutController;
 use App\Http\Controllers\PlanController;
+use App\Models\User;
+use App\Models\CreatorPlan;
+
 
 Route::get('/', function () {
     return view('welcome'); 
@@ -38,5 +41,29 @@ Route::get('/creators/{creator}/subscribe', [CreatorSubscribePageController::cla
 
 Route::middleware('auth')->post('/plans', [PlanController::class, 'store'])
     ->name('plans.store');
+
+Route::middleware('auth')->group(function () {
+    // Creator Monetize page
+    Route::view('/dashboard/monetize', 'connect.status')->name('creator.monetize');
+
+    // Creator Plan form page
+    Route::get('/dashboard/plans', function () {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        $plans = CreatorPlan::query()->where('creator_id', $user->id)->latest()->get();
+        return view('plans.create', compact('plans', 'user'));
+    })->name('plans.create.form');
+
+    // Subscriber: My Subscriptions page
+    Route::view('/subscriptions', 'subscriptions.index')->name('subscriptions.index');
+});
+
+// Public creator page (list plans with subscribe buttons)
+Route::get('/@{creator}', function (User $creator) {
+    $plans = CreatorPlan::query()->where('creator_id', $creator->id)->where('active', true)->orderBy('amount')->get();
+    abort_if($plans->isEmpty(), 404);
+    return view('creators.show', compact('creator', 'plans'));
+})->name('creators.show');
+
 
 require __DIR__.'/auth.php';

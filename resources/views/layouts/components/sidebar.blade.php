@@ -11,6 +11,11 @@
                            <i class="fas fa-dashboard me-1"></i> Dashboard
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('connect.status') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                           <i class="fas fa-dashboard me-1"></i>Monetize Page
+                        </a>
+                    </li>
                 </ul>
             </div>
         </li>
