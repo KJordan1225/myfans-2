@@ -26,7 +26,7 @@
             </div>
 
             {{-- Onboarding status hint (optional) --}}
-            @if(!$creator->profile?->stripe_account_id || !$creator->profile?->charges_enabled)
+            @if(!$creator->profile?->stripe_account_id || !$creator->profile?->stripe_charges_enabled)
                 <div class="alert alert-warning">
                     This creator hasn’t finished payments onboarding yet. Subscriptions are currently unavailable.
                 </div>
@@ -48,7 +48,7 @@
                         @auth
                             @if(auth()->id() === (int)$creator->id)
                                 <span class="badge bg-secondary">You’re the creator</span>
-                            @elseif(!$creator->profile?->stripe_account_id || !$creator->profile?->charges_enabled)
+                            @elseif(!$creator->profile?->stripe_account_id || !$creator->profile?->stripe_charges_enabled)
                                 <button class="btn btn-secondary" disabled>Unavailable</button>
                             @else
                                 <form action="{{ route('plans.subscribe', $plan) }}" method="POST">

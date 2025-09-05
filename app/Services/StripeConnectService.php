@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\CreatorPlan;
 use App\Models\User;
-use Illuminate\Support\Str;
 use Stripe\StripeClient;
+use App\Models\CreatorPlan;
+use App\Models\UserProfile;
+use Illuminate\Support\Str;
 
 class StripeConnectService
 {
@@ -48,9 +49,9 @@ class StripeConnectService
                 'name'  => $subscriber->name,
                 'metadata' => [ 'user_id' => (string) $subscriber->id ],
             ]);
-            $subscriber->forceFill(['stripe_customer_id' => $customer->id])->save();
+            $subscriber->profile->forceFill(['stripe_customer_id' => $customer->id])->save();
         }
-        return $subscriber->stripe_customer_id;
+        return $subscriber->profile->stripe_customer_id;
     }
 
     /** Create a Checkout Session for a subscription that pays a connected account. */
