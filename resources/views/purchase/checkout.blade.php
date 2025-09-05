@@ -68,6 +68,7 @@
             </button>
           </form>
 
+          
           <form action="{{ route('subscriptions.subscribe', $subscription) }}" 
               method="POST" 
               class="d-inline"

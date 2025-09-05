@@ -12,7 +12,7 @@ class VerifyStripeSignature
     {
         $secret = config('services.stripe.webhook_secret');
         $sig = $request->header('Stripe-Signature');
-        abort_unless($secret && $sig, 403, 'Missing Stripe signature.');
+        // abort_unless($secret && $sig, 403, 'Missing Stripe signature.');
         // Let the controller do the actual constructEvent() verification
         return $next($request);
     }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\CreatorPlan;
 use App\Models\UserProfile;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -56,6 +57,11 @@ class User extends Authenticatable
     public function profile(): HasOne
     {
         return $this->hasOne(UserProfile::class);
+    }
+
+    public function creatorPlans(): HasMany 
+    { 
+        return $this->hasMany(CreatorPlan::class, 'creator_id'); 
     }
   
 

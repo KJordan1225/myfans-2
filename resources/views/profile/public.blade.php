@@ -82,6 +82,11 @@
 		<p>{{ $postCount }} Posts</p>
 	</div>
 
+	<form action="{{ route('plans.subscribe', $plan) }}" method="POST">
+		@csrf
+		<button type="submit" class="btn btn-primary">Subscribe for ${{ number_format($plan->amount/100, 2) }} / {{ $plan->interval }}</button>
+	</form>
+
 
 
 <div class="container my-4">

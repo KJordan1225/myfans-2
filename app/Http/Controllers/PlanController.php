@@ -2,13 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\StripeConnectService;
+use App\Models\CreatorPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Services\StripeConnectService;
 
 class PlanController extends Controller
 {
     public function __construct(private StripeConnectService $svc) {}
+
+    public function index()
+    {
+        /** @var \App\Models\User $user */
+        $user = auth()->user();
+        $plans = CreatorPlan::query()->where('creator_id', $user->id)->latest()->get();
+        return view('plans.create', compact('plans', 'user'));
+    }
 
     public function store(Request $request)
     {

@@ -40,7 +40,7 @@
         <div class="d-flex gap-2">
           <a href="{{ route('connect.start') }}" class="btn btn-primary">Start / Continue Onboarding</a>
           <a href="{{ route('connect.refresh') }}" class="btn btn-outline-secondary">Refresh Status</a>
-          <a href="{{ route('plans.create.form') }}" class="btn btn-success {{ $profile?->charges_enabled ? '' : 'disabled' }}">Create Plans</a>
+          <a href="{{ route('plans.create.form') }}" class="btn btn-success">Create Plans</a>
         </div>
       </div>
     </div>
