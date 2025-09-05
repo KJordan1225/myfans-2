@@ -30,8 +30,8 @@
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div>
                                 <div class="fw-semibold">
-                                    @<a href="{{ route('creators.show', ['username' => $sub->creator->username]) }}">
-                                        {{ $sub->creator->username }}
+                                    <a href="{{ route('creators.show', ['username' => $sub->creator->name]) }}">
+                                        {{ $sub->creator->name }}
                                     </a> — {{ $sub->plan->name }}
                                 </div>
                                 <div class="text-muted small">

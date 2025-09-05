@@ -147,7 +147,6 @@ class UserProfileController extends Controller
         }
 
         if ($request->hasFile('banner')) {
-            // dd('upload banner');
             $userProfile->addMediaFromRequest('banner')->toMediaCollection('banner');
         }
 

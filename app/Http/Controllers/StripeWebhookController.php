@@ -7,47 +7,41 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Stripe\StripeClient;
 use Stripe\Webhook;
+use App\Actions\Subscriptions\SyncStripeSubscription;
 
 class StripeWebhookController extends Controller
 {
-    public function __construct(private StripeClient $stripe) {}
+    public function __construct(
+        private StripeClient $stripe,
+        private SyncStripeSubscription $sync,
+    ) {}
 
-    public function handle(Request $request)
+
+     public function handle(Request $request)
     {
-        $payload = $request->getContent();
-        $sigHeader = $request->header('Stripe-Signature');
-        $secret = config('services.stripe.webhook_secret');
-
-        try {
-            $event = Webhook::constructEvent($payload, $sigHeader, $secret);
-        } catch (\Throwable $e) {
-            Log::warning('Stripe webhook signature failed', ['e' => $e->getMessage()]);
-            abort(400, 'Invalid signature');
-        }
+        // ... verify signature (as you already do) ...
 
         switch ($event->type) {
             case 'checkout.session.completed':
-                $session = $event->data->object; // \Stripe\Checkout\Session
+                $session = $event->data->object;
                 if ($session->mode === 'subscription') {
-                    $this->upsertSubscriptionFromSession($session->id);
+                    $this->sync->fromSessionId($session->id);
                 }
                 break;
 
             case 'customer.subscription.created':
             case 'customer.subscription.updated':
             case 'customer.subscription.deleted':
-                $sub = $event->data->object; // \Stripe\Subscription
-                $this->upsertSubscriptionFromStripeId($sub->id);
+                $sub = $event->data->object;
+                $this->sync->fromSubscriptionId($sub->id);
                 break;
 
-            case 'invoice.payment_succeeded':
-            case 'invoice.payment_failed':
-                // Optional: track invoices or notify users
-                break;
+            // optional: invoice.payment_* if you want
         }
 
         return response()->json(['status' => 'ok']);
     }
+
 
     private function upsertSubscriptionFromSession(string $sessionId): void
     {

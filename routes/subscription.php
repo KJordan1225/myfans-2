@@ -6,18 +6,11 @@ use App\Http\Controllers\SubscriptionController;
 
 
 Route::middleware(['auth'])->group(function () {
-    // Subscriber-facing
-    Route::get('/subscriptions', [SubscriptionController::class, 'index'])
-        ->name('subscriptions.index'); // the user's active subs
+    // Subscriber-facing   
     Route::post('/subscriptions/{subscription}/subscribe', [SubscriptionController::class, 'subscribe'])
         ->name('subscriptions.subscribe');
     Route::post('/subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])
         ->name('subscriptions.resume');
-});
-
-Route::middleware('auth')->group(function () {
-    Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])
-        ->name('subscriptions.cancel');
 });
 
 Route::middleware(['auth', 'role:creator'])->group(function () {

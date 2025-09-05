@@ -15,7 +15,6 @@ class SubscriptionCancelController extends Controller
     // Safer “end-of-period” cancel (recommended UX)
     public function cancelAtPeriodEnd(Subscription $subscription, Request $request)
     {
-        dd($subscription);
         $this->authorizeFan($subscription);
         
         $opts = $this->optsFor($subscription); // adds stripe_account when needed

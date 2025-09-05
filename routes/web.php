@@ -105,12 +105,4 @@ Route::middleware('auth')->group(function () {
     Route::view('/subscriptions', 'subscriptions.index')->name('subscriptions.index');
 });
 
-// Public creator page (list plans with subscribe buttons)
-Route::get('/@{creator}', function (User $creator) {
-    $plans = CreatorPlan::query()->where('creator_id', $creator->id)->where('active', true)->orderBy('amount')->get();
-    abort_if($plans->isEmpty(), 404);
-    return view('creators.show', compact('creator', 'plans'));
-})->name('creators.show');
-
-
 require __DIR__.'/auth.php';

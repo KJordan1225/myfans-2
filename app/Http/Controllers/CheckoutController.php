@@ -6,10 +6,15 @@ use App\Models\CreatorPlan;
 use App\Services\StripeConnectService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Actions\Subscriptions\SyncStripeSubscription;
 
 class CheckoutController extends Controller
 {
-    public function __construct(private StripeConnectService $stripeSvc) {}
+    public function __construct(
+        private StripeConnectService $stripeSvc,
+        private SyncStripeSubscription $sync
+    ) {}
+
 
     public function subscribe(Request $request, CreatorPlan $plan)
     {
@@ -30,8 +35,19 @@ class CheckoutController extends Controller
 
     public function success(Request $request)
     {
+        if ($sid = $request->query('session_id')) {
+            // Best-effort local mirror right away (webhook remains source of truth)
+            try {
+                $this->sync->fromSessionId($sid);
+            } catch (\Throwable $e) {
+                // Swallow and show page; webhook will fix it soon anyway
+                \Log::warning('Sync from success failed', ['e' => $e->getMessage()]);
+            }
+        }
+
         return view('subscribe.success');
     }
+
 
     public function cancel(Request $request)
     {
