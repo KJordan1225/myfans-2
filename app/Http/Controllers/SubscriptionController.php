@@ -15,7 +15,8 @@ use App\Http\Requests\Creator\UpsertSubscriptionRequest;
 class SubscriptionController extends Controller
 {
     public function __construct(
-        protected SubscriptionService $service
+        protected SubscriptionService $service,
+        private StripeClient $stripe
     ) {}
 
     /**
@@ -123,20 +124,7 @@ class SubscriptionController extends Controller
 
         return back()->with('success', 'Your subscription will cancel at period end.');
     }
-
-
-    /**
-     * Subscriber action: resume a previously canceled subscription.
-     */
-    public function resume(Request $request, Subscription $subscription)
-    {
-        $subscriber = $request->user();
-
-        // Optional policy: $this->authorize('resume', [$subscriber, $subscription]);
-        $this->service->resume($subscriber, $subscription, now()->addMonth());
-
-        return back()->with('success', 'Subscription resumed.');
-    }
+    
 
     /**
      * Creator page: list active subscribers to my plan.
@@ -187,5 +175,75 @@ class SubscriptionController extends Controller
 
         return [$product, $price];
     }
+
+    /**
+     * Cancel at the end of the current period (keeps access until then).
+     */
+    public function cancelAtPeriodEnd(Request $request, Subscription $subscription)
+    {        
+        // Only the subscriber can cancel their own subscription
+        abort_unless($subscription->subscriber_id === Auth::id(), 403);
+
+        // 1) Update on Stripe
+        $this->stripe->subscriptions->update(
+            $subscription->stripe_subscription_id,
+            ['cancel_at_period_end' => true]
+        );
+        // 2) Mirror locally for instant UX (webhooks remain source of truth)
+        $subscription->update(['cancel_at_period_end' => true]);
+
+        return back()->with('success', 'Your subscription will cancel at period end.');
+    }
+
+    /**
+     * Cancel immediately (no more access now).
+     * - You can choose proration behavior; below shows invoice_now + prorate for fairness.
+     * - If you don’t want to prorate, set 'prorate' => false and omit 'invoice_now'.
+     */
+    public function cancelNow(Request $request, Subscription $subscription)
+    {
+        abort_unless($subscription->subscriber_id === Auth::id(), 403);
+
+        // 1) Cancel on Stripe immediately
+        // NOTE: As of current Stripe PHP SDK, `cancel()` immediately ends the subscription.
+        // Optional params for proration & invoicing:
+        $this->stripe->subscriptions->cancel(
+            $subscription->stripe_subscription_id,
+            [
+                // Uncomment / tweak based on your policy:
+                // 'invoice_now' => true,
+                // 'prorate'     => true,
+            ]
+        );
+
+        // 2) Mirror locally (webhook `customer.subscription.deleted` will also update)
+        $subscription->update([
+            'status'               => 'canceled',
+            'cancel_at_period_end' => false,
+            'current_period_end'   => now(), // optional: immediate effect for UI
+        ]);
+
+        return back()->with('success', 'Your subscription has been canceled immediately.');
+    }
+
+    /**
+     * Resume a subscription that was set to cancel at period end.
+     * (Only works before Stripe ends it.)
+     */
+    public function resume(Request $request, Subscription $subscription)
+    {
+        abort_unless($subscription->subscriber_id === Auth::id(), 403);
+
+        // If it’s already ended on Stripe, this will fail; that’s expected.
+        $this->stripe->subscriptions->update(
+            $subscription->stripe_subscription_id,
+            ['cancel_at_period_end' => false]
+        );
+
+        $subscription->update(['cancel_at_period_end' => false]);
+
+        return back()->with('success', 'Your subscription will continue past the current period.');
+    }
+
 }
 

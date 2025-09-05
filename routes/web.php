@@ -59,9 +59,6 @@ Route::middleware('auth')->group(function () {
     Route::view('/me/subscriptions', 'subscriptions.index')
         ->name('me.subscriptions');
 
-    Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])
-        ->name('subscriptions.cancel');
-
     // Creator: create plans (already in your stack)
     Route::post('/plans', [PlanController::class, 'store'])
         ->name('plans.store');
@@ -104,5 +101,21 @@ Route::middleware('auth')->group(function () {
     // Subscriber: My Subscriptions page
     Route::view('/subscriptions', 'subscriptions.index')->name('subscriptions.index');
 });
+
+// =========== CANCEL SUBSCRIPTION ===========
+Route::middleware('auth')->group(function () {
+    // Cancel at period end
+    Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancelAtPeriodEnd'])
+        ->name('subscriptions.cancel');
+
+    // Cancel immediately (optional separate action)
+    Route::post('/subscriptions/{subscription}/cancel-now', [SubscriptionController::class, 'cancelNow'])
+        ->name('subscriptions.cancel-now');
+
+    // (Optional) Undo a “cancel at period end”
+    Route::post('/subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])
+        ->name('subscriptions.resume');
+});
+
 
 require __DIR__.'/auth.php';

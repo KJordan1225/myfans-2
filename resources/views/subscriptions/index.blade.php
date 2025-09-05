@@ -43,13 +43,15 @@
                                         • Renews {{ $sub->current_period_end->toFormattedDateString() }}
                                     @endif
                                 </div>
-                            </div>
+                            </div>                           
+
 
                             @if(!$sub->cancel_at_period_end)
+                                {{-- Cancel at period end --}}
                                 <form action="{{ route('subscriptions.cancel', $sub) }}" method="POST"
-                                      onsubmit="return confirm('Cancel at period end?');">
+                                    onsubmit="return confirm('Cancel at the end of the current period?');">
                                     @csrf
-                                    <button class="btn btn-outline-danger btn-sm">Cancel</button>
+                                    <button class="btn btn-outline-danger btn-sm">Cancel (end of period)</button>
                                 </form>
                             @else
                                 <span class="badge bg-secondary">Queued to cancel</span>
