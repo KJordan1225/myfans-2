@@ -3,148 +3,67 @@
     <div class="row">
     @include('layouts.components.sidebar')
         <div class="col-md-9">
-        <h3 class="my-3">My Subscriptions 1</h3>
+        <h3 class="my-3">Subscription Index Page</h3>
         <hr />
         <div class="row mt-2">
             <div class="col-md-9">
 			
-			
-<div class="max-w-6xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-4">My Subscriptions</h1>
 
-    @if(session('success'))
-        <div class="mb-4 p-3 rounded bg-green-100 text-green-800">
-            {{ session('success') }}
-        </div>
-    @endif
+@include('partials.flash')
 
-    @if($subscriptions->isEmpty())
-        <div class="rounded border bg-white p-5 shadow-sm">
-            <p class="text-gray-700">You don’t have any active subscriptions yet.</p>
-        </div>
-    @else
-        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            @foreach($subscriptions as $subscription)
-                @php
-                    $creator = $subscription->creator;
-                    $profile = $creator?->creatorProfile;
-                    $pivot   = $subscription->pivot ?? null; 
-                    $active  = $pivot && $pivot->is_active && $pivot->status === 'active' && (empty($pivot->ends_at) || \Illuminate\Support\Carbon::parse($pivot->ends_at)->isFuture());
-                @endphp
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-9">
+            <h3 class="mb-3">My Subscriptions</h3>
 
-                <div class="rounded border bg-white shadow-sm overflow-hidden">
-                    <div class="p-4 border-b bg-gray-50">
-                        <div class="flex items-center gap-3">
-                            {{-- Avatar --}}
-                            <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
-                                @if($profile?->avatar_path)
-                                    <img src="{{ asset('storage/' . $profile->avatar_path) }}" alt="Avatar" class="w-full h-full object-cover">
-                                @endif
-                            </div>
+            @php
+                $subs = \App\Models\Subscription::with(['creator.profile', 'plan'])
+                    ->where('subscriber_id', auth()->id())
+                    ->latest()->get();
+            @endphp
+
+            @if($subs->isEmpty())
+                <div class="alert alert-info">You don’t have any active subscriptions yet.</div>
+            @else
+                @foreach($subs as $sub)
+                    <div class="card mb-3">
+                        <div class="card-body d-flex justify-content-between align-items-center">
                             <div>
-                                <div class="font-semibold">
-                                    {{ $profile?->display_name ?? $creator?->name ?? 'Creator' }}
+                                <div class="fw-semibold">
+                                    @<a href="{{ route('creators.show', ['username' => $sub->creator->username]) }}">
+                                        {{ $sub->creator->username }}
+                                    </a> — {{ $sub->plan->name }}
                                 </div>
-                                <div class="text-xs text-gray-500">
-                                    Plan: ${{ number_format($subscription->price, 2) }}/{{ $subscription->interval }}
+                                <div class="text-muted small">
+                                    Status: {{ $sub->status }}
+                                    @if($sub->cancel_at_period_end)
+                                        • Cancels at period end
+                                    @endif
+                                    @if($sub->current_period_end)
+                                        • Renews {{ $sub->current_period_end->toFormattedDateString() }}
+                                    @endif
                                 </div>
                             </div>
+
+                            @if(!$sub->cancel_at_period_end)
+                                <form action="{{ route('subscriptions.cancel', $sub) }}" method="POST"
+                                      onsubmit="return confirm('Cancel at period end?');">
+                                    @csrf
+                                    <button class="btn btn-outline-danger btn-sm">Cancel</button>
+                                </form>
+                            @else
+                                <span class="badge bg-secondary">Queued to cancel</span>
+                            @endif
                         </div>
                     </div>
+                @endforeach
+            @endif
 
-                    <div class="p-4 text-sm text-gray-700 min-h-16">
-                        {{ \Illuminate\Support\Str::limit($subscription->description, 140) }}
-                    </div>
-
-                    <div class="px-4 pb-4 text-sm">
-                        <div class="flex items-center justify-between mb-3">
-                            <div>
-                                <div class="text-gray-600">
-                                    Since:
-                                    <span class="font-medium">
-                                        {{ $pivot?->starts_at ? \Illuminate\Support\Carbon::parse($pivot->starts_at)->toFormattedDateString() : '—' }}
-                                    </span>
-                                </div>
-                                <div class="text-gray-600">
-                                    Status:
-                                    <span class="inline-block px-2 py-0.5 rounded text-xs 
-                                        {{ $active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700' }}">
-                                        {{ $pivot?->status ?? 'unknown' }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <div class="text-right">
-                                @if($active)
-                                    <form method="POST" action="{{ route('subscriptions.cancel', $subscription) }}" class="cancel-form d-inline">
-                                        @csrf
-                                        <button type="button" class="btn btn-danger cancel-btn">
-                                            Cancel
-                                        </button>
-                                    </form>
-                                @else
-                                    <form method="POST" action="{{ route('subscriptions.resume', $subscription) }}">
-                                        @csrf
-                                        <button type="submit" class="btn btn-primary">
-                                            Resume
-                                        </button>
-                                    </form>
-                                @endif
-                            </div>
-                        </div>
-
-                        @if(!empty($pivot?->price_snapshot))
-                            <div class="text-xs text-gray-500">
-                                You paid: ${{ number_format($pivot->price_snapshot, 2) }} (snapshot)
-                            </div>
-                        @endif
-
-                        @if(!empty($pivot?->provider_subscription_id))
-                            <div class="text-xs text-gray-400">
-                                Ref: #{{ \Illuminate\Support\Str::limit($pivot->provider_subscription_id, 14) }}
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            @endforeach
         </div>
-    @endif
+    </div>
 </div>
 
-            </div>
-        </div>
-      </div>
-    </div>
-
-    {{-- SweetAlert2 script --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll(".cancel-btn").forEach(function(button) {
-                button.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    let form = this.closest("form");
-
-                    Swal.fire({
-                        title: "Are you sure?",
-                        text: "You are about to cancel this subscription.",
-                        icon: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#d33",
-                        cancelButtonColor: "#3085d6",
-                        confirmButtonText: "Yes, cancel it!",
-                        cancelButtonText: "No, keep it"
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
-                    });
-                });
-            });
-        });
-    </script>
-
-
+ 
             </div>
         </div>
       </div>

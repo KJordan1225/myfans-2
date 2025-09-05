@@ -1,16 +1,17 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserProfileController;
-use App\Http\Controllers\CreatorSubscribePageController;
-use App\Http\Controllers\ConnectSubscriptionCheckoutController;
-use App\Http\Controllers\PlanController;
 use App\Models\User;
 use App\Models\CreatorPlan;
+use App\Models\UserProfile;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PlanController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\ConnectOnboardingController;
+use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\ConnectOnboardingController;
+use App\Http\Controllers\CreatorSubscribePageController;
+use App\Http\Controllers\ConnectSubscriptionCheckoutController;
 
 
 Route::get('/', function () {
@@ -32,7 +33,7 @@ Route::middleware('auth')->group(function () {
 Route::get('/@{username}', function (string $username) {
     /** @var \App\Models\User $creator */
     $creator = User::query()
-        ->where('username', $username)
+        ->where('name', $username)
         ->with(['profile', 'creatorPlans' => function ($q) {
             $q->where('active', true)->orderBy('amount');
         }])
