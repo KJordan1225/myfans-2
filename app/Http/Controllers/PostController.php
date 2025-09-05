@@ -123,4 +123,21 @@ class PostController extends Controller
             ->with('success', 'Post deleted successfully.');
     }
 
+    public function showPosts(string $username)
+    {
+        /** @var \App\Models\User $creator */
+        $creator = User::query()
+            ->where('name', $username)            
+            ->first();
+
+        // Eager-load media to prevent N+1 when calling getFirstMediaUrl()/getMedia()
+        $posts = Post::query()
+            ->with('media')         // <-- important
+            ->where('user_id', $creator->id)
+            ->latest()
+            ->get();
+
+        return view('posts.show', compact('creator', 'posts'));
+    }
+
 }

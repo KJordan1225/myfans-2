@@ -30,10 +30,11 @@
                         <div class="card-body d-flex justify-content-between align-items-center">
                             <div>
                                 <div class="fw-semibold">
-                                    <a href="{{ route('creators.show', ['username' => $sub->creator->name]) }}">
+                                    <a href="{{ route('posts.show', $sub->creator->name) }}">
                                         {{ $sub->creator->name }}
-                                    </a> — {{ $sub->plan->name }}
-                                </div>
+                                    </a> — {{ $sub->plan->name }} — 
+                                    <a href="{{ route('creators.show', ['username' => $sub->creator->name]) }}">Plan Details</a>
+                                </div>                                
                                 <div class="text-muted small">
                                     Status: {{ $sub->status }}
                                     @if($sub->cancel_at_period_end)

@@ -6,6 +6,7 @@ use App\Models\UserProfile;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\SubscriptionController;
@@ -117,5 +118,9 @@ Route::middleware('auth')->group(function () {
         ->name('subscriptions.resume');
 });
 
+// =========== SHOW POSTS ===============
+Route::get('/view/{username}', [PostController::class, 'showPosts'])
+    ->name('posts.show');
+    
 
 require __DIR__.'/auth.php';

@@ -51,4 +51,21 @@ class Post extends Model implements HasMedia
             ->acceptsMimeTypes(['video/mp4', 'video/quicktime'])
             ->singleFile();
     }
+
+    public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void
+    {
+        $this->addMediaConversion('thumb')->width(400)->height(400)->sharpen(10);
+    }
+
+    // Clean Blade usage: $post->image_url / $post->image_thumb_url
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('image') ?: null;
+    }
+
+    public function getImageThumbUrlAttribute(): ?string
+    {
+        return $this->getFirstMediaUrl('image', 'thumb') ?: $this->image_url;
+    }
+
 }
