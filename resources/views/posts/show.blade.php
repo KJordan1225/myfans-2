@@ -28,7 +28,14 @@
                 @if($post->media->isNotEmpty())
                     <div class="row g-3 mt-3">
                         @foreach($post->media as $media)
-                            @empty($sub)
+                            @php
+                                $mime  = $media?->mime_type ?? '';
+                                $isImage = str_starts_with($mime, 'image/');
+                                $isVideo = str_starts_with($mime, 'video/');
+                                $imageUrl = $media->getUrl();
+                                $videoUrl = $media?->getUrl();
+                            @endphp
+                            @if (empty($sub) && $post->visibility !== 'public')
                                 <div class="col-12 col-sm-6 col-md-4">
                                     <img
                                         src="{{ asset('images/placeholders/media-locked.png') }}" }}"
@@ -38,14 +45,28 @@
                                     <div class="small text-muted mt-1 text-truncate">{{ $media->file_name }}</div>
                                 </div>
                             @else
-                                <div class="col-12 col-sm-6 col-md-4">
-                                    <img
-                                        src="{{ $media->getUrl() }}"
-                                        alt="{{ $media->name }}"
-                                        class="img-fluid rounded shadow-sm"
-                                    >
-                                    <div class="small text-muted mt-1 text-truncate">{{ $media->file_name }}</div>
-                                </div>
+                                @if($isImage)
+                                    <div class="col-12 col-sm-6 col-md-4">
+                                        <img
+                                            src="{{ $media->getUrl() }}"
+                                            alt="{{ $media->name }}"
+                                            class="img-fluid rounded shadow-sm"
+                                        >
+                                        <div class="small text-muted mt-1 text-truncate">{{ $media->file_name }}</div>
+                                    </div>
+                                @elseif($isVideo)
+                                     <div class="ratio ratio-16x9">
+                                        <video controls preload="metadata" class="rounded">
+                                            <source src="{{ $videoUrl }}" type="{{ $mime }}">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                @else
+                                    <div class="border rounded d-flex align-items-center justify-content-center"
+                                        style="height: 240px;">
+                                        <span class="text-muted small">Unsupported media ({{ $mime ?: 'unknown' }})</span>
+                                    </div>
+                                @endif
                             @endif
                         @endforeach
                     </div>

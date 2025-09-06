@@ -140,7 +140,9 @@ class PostController extends Controller
             ->with('media')
             ->where('user_id', $creator->id)
             ->latest()
-            ->paginate(1); // 10 per page; tweak as needed 
+            ->paginate(5); // 10 per page; tweak as needed 
+
+        // dd($posts->first()->getMedia());
 
         return view('posts.show', compact('creator', 'posts', 'sub'));
     }     
