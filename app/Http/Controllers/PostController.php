@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Subscription;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -130,14 +131,18 @@ class PostController extends Controller
             ->where('name', $username)            
             ->first();
 
+        $sub = Subscription::where('subscriber_id', Auth::id())
+            ->where('creator_id', $creator->id)
+            ->first(); 
+
         // Eager-load media to prevent N+1 when calling getFirstMediaUrl()/getMedia()
         $posts = Post::query()
-            ->with('media')         // <-- important
+            ->with('media')
             ->where('user_id', $creator->id)
             ->latest()
-            ->get();
+            ->paginate(1); // 10 per page; tweak as needed 
 
-        return view('posts.show', compact('creator', 'posts'));
-    }
-
+        return view('posts.show', compact('creator', 'posts', 'sub'));
+    }     
+    
 }

@@ -27,7 +27,8 @@ class Post extends Model implements HasMedia
         return $this->belongsTo(User::class);
     }
 
-        /**
+
+    /**
      * Define your media collections
      */
     public function registerMediaCollections(): void
@@ -35,21 +36,13 @@ class Post extends Model implements HasMedia
         // One cover image; new upload replaces the old automatically
         $this->addMediaCollection('cover')->singleFile();
 
+        $this
+            ->addMediaCollection('image')
+            ->singleFile(); // keeps only the latest image
+
         // Multiple attachments (images, pdfs, etc.)
         $this->addMediaCollection('attachments');
-
-        // gallery (multiple images)
-        $this->addMediaCollection('images')
-            ->useDisk('public')
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
-            ->singleFile()
-            ->withResponsiveImages();
-
-        // Allow multiple MP4s per post (public disk by default)
-        $this->addMediaCollection('videos')
-            ->useDisk('public')	
-            ->acceptsMimeTypes(['video/mp4', 'video/quicktime'])
-            ->singleFile();
+        
     }
 
     public function registerMediaConversions(\Spatie\MediaLibrary\MediaCollections\Models\Media $media = null): void

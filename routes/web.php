@@ -31,17 +31,8 @@ Route::middleware('auth')->group(function () {
 });
 
 // ---------- Public-ish: show a creator profile + plans ----------
-Route::get('/@{username}', function (string $username) {
-    /** @var \App\Models\User $creator */
-    $creator = User::query()
-        ->where('name', $username)
-        ->with(['profile', 'creatorPlans' => function ($q) {
-            $q->where('active', true)->orderBy('amount');
-        }])
-        ->firstOrFail();
-
-    return view('creators.show', compact('creator'));
-})->name('creators.show');
+Route::get('/@{username}', [PostController::class, 'showPosts'])
+        ->name('posts.username');
 
 // ---------- Auth-only subscription actions ----------
 Route::middleware('auth')->group(function () {
