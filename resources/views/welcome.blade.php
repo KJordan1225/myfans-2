@@ -55,7 +55,7 @@
                 Welcome to {{ config('app.name') }}
             </h1>
             <p class="text-lg lg:text-xl text-center mb-6 text-white">
-                This is a simple starter template for {{ config('app.name') }} applications.
+                Your go-to platform for connecting creators and fans efficiently.
             </p>
         </div>
 

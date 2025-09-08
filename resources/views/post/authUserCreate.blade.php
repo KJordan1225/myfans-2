@@ -85,22 +85,22 @@
 
 
                         {{-- Price --}}
-                        <div class="mb-3">
+                        <!-- <div class="mb-3">
                             <label for="price" class="form-label">Price</label>
                             <input type="number" step="0.01" class="form-control @error('price') is-invalid @enderror" id="price" name="price" value="" style="border: 2px solid #6f42c1;">
                             @error('price')
                                 <div class="invalid-feedback">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> -->
 
                         {{-- Is Paid --}}
-                        <div class="mb-3 form-check">
+                        <!-- <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="is_paid" name="is_paid" value="1" style="border: 2px solid #6f42c1;">
                             <label class="form-check-label" for="is_paid">This is a paid post</label>
                             @error('is_paid')
                                 <div class="text-danger mt-1">{{ $message }}</div>
                             @enderror
-                        </div>
+                        </div> -->
 
                         {{-- Visibility --}}
                         <div class="mb-3">

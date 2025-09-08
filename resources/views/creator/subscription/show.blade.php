@@ -29,31 +29,54 @@
         </div>
     @endif
 
-    <div class="rounded border bg-white p-5 shadow-sm">
+    <div class="rounded bg-white p-5 shadow-sm"
+         style="border: 2px solid #6f42c1;">
         <form method="POST" action="{{ route('creator.subscription.store') }}">
             @csrf
 
             <div class="mb-4">
                 <label class="block font-medium mb-1" for="title">Title</label>
-                <input id="title" name="title" type="text" class="w-full border rounded p-2"
+                <input id="title" 
+                        name="title" 
+                        type="text" 
+                        class="w-full rounded p-2 form-control"
+                        style="border: 2px solid #6f42c1;"
                        value="{{ old('title', $subscription?->title ?? 'Creator Plan') }}" required>
             </div>
 
             <div class="mb-4">
                 <label class="block font-medium mb-1" for="description">Description</label>
-                <textarea id="description" name="description" rows="4" class="w-full border rounded p-2"
-                          placeholder="Describe what subscribers get...">{{ old('description', $subscription?->description) }}</textarea>
+                <textarea 
+                    id="description"
+                    name="description"
+                    rows="4"
+                    class="w-full rounded p-2 form-control"
+                    style="border: 2px solid #6f42c1;"
+                    placeholder="Describe what subscribers get..."
+                >
+                    {{ old('description', $subscription?->description) }}
+                </textarea>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                 <div>
                     <label class="block font-medium mb-1" for="price">Price (USD)</label>
-                    <input id="price" name="price" type="number" step="0.01" min="1" class="w-full border rounded p-2"
+                    <input id="price" 
+                            name="price" 
+                            type="number" 
+                            step="0.01" 
+                            min="1" 
+                            class="w-full rounded p-2"
+                            style="border: 2px solid #6f42c1;"
                            value="{{ old('price', $subscription?->price ?? 9.99) }}" required>
                 </div>
                 <div>
                     <label class="block font-medium mb-1" for="interval">Interval</label>
-                    <select id="interval" name="interval" class="w-full border rounded p-2" required>
+                    <select id="interval" 
+                            name="interval" 
+                            class="w-full rounded p-2" 
+                            style="border: 2px solid #6f42c1;"
+                            required>
                         @php $interval = old('interval', $subscription?->interval ?? 'month'); @endphp
                         <option value="month" @selected($interval === 'month')>Monthly</option>
                         <option value="year"  @selected($interval === 'year')>Yearly</option>
