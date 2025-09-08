@@ -44,7 +44,7 @@ class DatabaseSeeder extends Seeder
 
         $user_profile = UserProfile::create([
             'user_id' => $user->id,
-            'display_name' => 'Test-User-1',
+            'display_name' => 'Test User 1',
         ]);
 
         $user->assignRole('subscriber');
@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
 
         $user_profile = UserProfile::create([
             'user_id' => $user->id,
-            'display_name' => 'Test-User-2',
+            'display_name' => 'Test User 2',
         ]);
 
         $user->assignRole('subscriber');
@@ -70,49 +70,10 @@ class DatabaseSeeder extends Seeder
 
         $user_profile = UserProfile::create([
             'user_id' => $user->id,
-            'display_name' => 'Test-User-3',
+            'display_name' => 'Test User 3',
         ]);
 
-        $user->assignRole('subscriber');
-
-        $user = User::factory()->create([
-            'name' => 'Test User 4',
-            'email' => 'testuser4@example.com',
-            'password' => Hash::make('Welc0me!1225'),
-        ]);
-
-        $user_profile = UserProfile::create([
-            'user_id' => $user->id,
-            'display_name' => 'Test-User-4',
-        ]);
-
-        $user->assignRole('subscriber');
-
-        $user = User::factory()->create([
-            'name' => 'Test User 5',
-            'email' => 'testuser5@example.com',
-            'password' => Hash::make('Welc0me!1225'),
-        ]);
-
-        $user_profile = UserProfile::create([
-            'user_id' => $user->id,
-            'display_name' => 'Test-User-5',
-        ]);
-
-        $user->assignRole('subscriber');
-
-        $user = User::factory()->create([
-            'name' => 'Test User 6',
-            'email' => 'testuser6@example.com',
-            'password' => Hash::make('Welc0me!1225'),
-        ]);
-
-        $user_profile = UserProfile::create([
-            'user_id' => $user->id,
-            'display_name' => 'Test-User-6',
-        ]);
-
-        $user->assignRole('subscriber');
+        $user->assignRole('subscriber');        
 
     }
 }
