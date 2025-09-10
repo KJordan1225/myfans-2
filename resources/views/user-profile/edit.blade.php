@@ -48,7 +48,7 @@
                                 class="form-control @error('display_name') is-invalid @enderror"
                                 style="border: 2px solid #6f42c1;"
                                 value="{{ old('display_name', $profile->display_name ?? '') }}"
-                                required
+                                readonly
                             >
                             @error('display_name')
                                 <div class="invalid-feedback">{{ $message }}</div>
