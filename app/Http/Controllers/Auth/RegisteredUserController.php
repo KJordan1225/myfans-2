@@ -44,7 +44,7 @@ class RegisteredUserController extends Controller
 
         $userProfile = UserProfile::create([
             'user_id' => $user->id,
-            'display_name' => 'temporary display name',
+            'display_name' => $user->name,
         ]);
 
         $user->assignRole('subscriber');
