@@ -5,9 +5,10 @@ use App\Models\CreatorPlan;
 use App\Models\UserProfile;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlanController;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ConnectOnboardingController;
@@ -19,9 +20,9 @@ Route::get('/', function () {
     return view('welcome'); 
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::resource('user-profile', UserProfileController::class);
