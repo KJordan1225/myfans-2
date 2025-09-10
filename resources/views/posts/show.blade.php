@@ -88,6 +88,28 @@
 
 </div>
 
+<script>
+    // Disable right-click context menu on all images
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('img').forEach(function (img) {
+            img.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+                alert("Right-click disabled on this image.");
+            });
+        });
+    });
+
+    // Disable right-click context menu on all images
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll('video').forEach(function (video) {
+            video.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+                alert("Right-click disabled on this video.");
+            });
+        });
+    });
+</script>
+
 
 
  
