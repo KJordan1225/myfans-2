@@ -59,7 +59,7 @@
               </div>
               <div class="small">Stripe Price: {{ $plan->stripe_price_id }}</div>
             </div>
-            <a class="btn btn-sm btn-outline-primary" href="{{ route('creators.show', ['creator' => $user]) }}">View as Public</a>
+
           </div>
         @empty
           <p class="text-muted mb-0">No plans yet.</p>

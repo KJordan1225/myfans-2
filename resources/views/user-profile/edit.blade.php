@@ -189,7 +189,13 @@
                                 value="1"
                                 {{ old('is_creator', (int) ($profile->is_creator ?? 0)) ? 'checked' : '' }}
                             >
-                            <label class="form-check-label" for="is_creator">I'm a content creator</label>
+                            <label class="form-check-label" 
+                                    for="is_creator"
+                                    style="color: red;
+                                            font-weight: bold;
+                                            font-size: 22px;">
+                                I'm a content creator
+                            </label>
                         </div>
 
                         {{-- Submit --}}
