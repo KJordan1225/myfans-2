@@ -81,57 +81,27 @@
                 <aside class="position-sticky" style="top: 1rem;">
                     {{-- Quick Actions --}}
                     <div class="card mb-3 shadow-sm">
-                        <div class="card-header fw-semibold">Quick Actions</div>
+                        <div class="card-header fw-semibold">User Links</div>
                         <div class="card-body">
-                            <div class="d-grid gap-2">
-                                <a href="#" class="btn btn-primary btn-sm">Edit Profile</a>
-                                <a href="#" class="btn btn-outline-primary btn-sm">Create Plan</a>
-                                <a href="#" class="btn btn-outline-secondary btn-sm">Stripe Onboarding</a>
-                            </div>
+                            <h6 class="fw-semibold mb-2">Users</h6>
+                            <ul class="list-unstyled">
+                                @foreach($users as $user)
+                                    <li class="mb-1">
+                                        <a href="{{ route('posts.username', ['username' => $user->name]) }}">
+                                View {{ $user->name }}'s posts
+                        </a>
+                                    </li>
+                                @endforeach
+                            </ul>
                         </div>
                     </div>
+
 
                     {{-- Account Status --}}
-                    <div class="card mb-3 shadow-sm">
-                        <div class="card-header fw-semibold">Account Status</div>
-                        <div class="card-body small">
-                            <ul class="list-unstyled mb-0">
-                                <li class="mb-2">
-                                    <span class="text-muted">Profile:</span>
-                                    <span class="ms-1 badge bg-success">Complete</span>
-                                </li>
-                                <li class="mb-2">
-                                    <span class="text-muted">Creator:</span>
-                                    {{-- Example condition; adjust to your data --}}
-                                    @if(auth()->user()?->profile?->is_creator)
-                                        <span class="ms-1 badge bg-success">Enabled</span>
-                                    @else
-                                        <span class="ms-1 badge bg-secondary">Not Enabled</span>
-                                    @endif
-                                </li>
-                                <li class="mb-2">
-                                    <span class="text-muted">Stripe:</span>
-                                    @if(auth()->user()?->profile?->charges_enabled)
-                                        <span class="ms-1 badge bg-success">Charges Enabled</span>
-                                    @else
-                                        <span class="ms-1 badge bg-warning text-dark">Action Needed</span>
-                                    @endif
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
+                    
 
                     {{-- Help / Links --}}
-                    <div class="card shadow-sm">
-                        <div class="card-header fw-semibold">Help & Resources</div>
-                        <div class="card-body small">
-                            <ul class="mb-0">
-                                <li><a href="#">Getting Started</a></li>
-                                <li><a href="#">Contact Support</a></li>
-                                <li><a href="#">Terms & Conditions</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                    
                 </aside>
             </div>
         </div> {{-- /row --}}
