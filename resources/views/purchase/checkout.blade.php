@@ -69,11 +69,7 @@
           </form>
 
           
-          <form action="{{ route('subscriptions.subscribe', $subscription) }}" 
-              method="POST" 
-              class="d-inline"
-              style="display:none;"
-          >
+          <form method="POST" action="{{ route('creator.subscribe.checkout', $creator->id) }}">
               @csrf
               <button type="submit" 
                 class="btn btn-primary"
