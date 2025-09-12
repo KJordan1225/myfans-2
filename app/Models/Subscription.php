@@ -23,7 +23,9 @@ class Subscription extends Model
     ];
 
     public function subscriber(): BelongsTo { return $this->belongsTo(User::class,'subscriber_id'); }
-    public function creator(): BelongsTo    { return $this->belongsTo(User::class,'creator_id'); }
-    public function plan(): BelongsTo       { return $this->belongsTo(CreatorPlan::class,'creator_plan_id'); }
+    public function creator(){ return $this->belongsTo(User::class,'creator_id'); }
+    public function plan(){ return $this->belongsTo(CreatorPlan::class,'provider_plan_id','paypal_plan_id'); }
+    public function user(){ return $this->belongsTo(User::class,'user_id'); }
+
 
 }
