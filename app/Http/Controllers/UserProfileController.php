@@ -204,7 +204,7 @@ class UserProfileController extends Controller
             'posts' => $posts,
             'postCount' => $postCount,
             'subscription' => $subscription,
-        ]);
+        ]); 
     }
 
     public function showByUsernamePostDetail(Request $request, Post $post)
