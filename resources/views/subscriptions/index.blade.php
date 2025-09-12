@@ -33,7 +33,7 @@
                                     <a href="{{ route('posts.show', $sub->creator->name) }}">
                                         {{ $sub->creator->name }}
                                     </a> — {{ $sub->plan->name }} — 
-                                    <a href="{{ route('creators.show', ['username' => $sub->creator->name]) }}">Plan Details</a>
+                                    
                                 </div>                                
                                 <div class="text-muted small">
                                     Status: {{ $sub->status }}

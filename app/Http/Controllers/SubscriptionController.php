@@ -50,7 +50,7 @@ class SubscriptionController extends Controller
         return view('creator.subscription.show', [
             'subscription' => $plan,
         ]);
-    }
+    } 
 
     /**
      * Creator action: create or update the single plan.

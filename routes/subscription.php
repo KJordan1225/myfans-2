@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\StripeController;
-use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\SubscriptionController; 
 
 
 Route::middleware(['auth', 'role:creator'])->group(function () {

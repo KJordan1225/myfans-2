@@ -15,6 +15,11 @@
         Posts by {{ $creator->name }}
     </h1>
 
+    <a href="{{ route('subscribe.byUsername', $creator->name) }}" class="btn btn-primary">
+        Subscribe to {{ $creator->name }}
+    </a>
+
+
     @forelse($posts as $post)
         <div class="card mb-4">
             <div class="card-body">

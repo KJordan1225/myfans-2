@@ -14,6 +14,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ConnectOnboardingController;
 use App\Http\Controllers\CreatorSubscribePageController;
 use App\Http\Controllers\ConnectSubscriptionCheckoutController;
+use App\Http\Controllers\SubscribeByNameController;
 
 
 Route::get('/', function () {
@@ -113,6 +114,9 @@ Route::middleware('auth')->group(function () {
 // =========== SHOW POSTS ===============
 Route::get('/view/{username}', [PostController::class, 'showPosts'])
     ->name('posts.show');
+
+Route::get('/subscribe/{user:name}', [SubscribeByNameController::class, 'callCreatorSubscribe'])
+    ->name('subscribe.byUsername');
     
 
 require __DIR__.'/auth.php';
