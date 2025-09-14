@@ -15,6 +15,10 @@ use App\Http\Controllers\ConnectOnboardingController;
 use App\Http\Controllers\CreatorSubscribePageController;
 use App\Http\Controllers\ConnectSubscriptionCheckoutController;
 use App\Http\Controllers\SubscribeByNameController;
+use App\Http\Controllers\PayPalController;
+use App\Http\Controllers\CreatorPlanController;
+use App\Http\Controllers\PayPalWebhookController;
+
 
 
 Route::get('/', function () {
@@ -32,57 +36,13 @@ Route::middleware('auth')->group(function () {
         ->name('profile.public.post-detail');
 });
 
-// ---------- Public-ish: show a creator profile + plans ----------
-Route::get('/@{username}', [PostController::class, 'showPosts'])
-        ->name('posts.username');
+// =========== SHOW POSTS ===============
+Route::get('/view/{username}', [PostController::class, 'showPosts'])
+    ->name('posts.show');
 
-// ---------- Auth-only subscription actions ----------
-Route::middleware('auth')->group(function () {
-
-    // Subscribing via Stripe Checkout
-    Route::post('/plans/{plan}/subscribe', [CheckoutController::class, 'subscribe'])
-        ->name('plans.subscribe');
-
-    // Post-checkout landing
-    Route::get('/subscribe/success', [CheckoutController::class, 'success'])
-        ->name('subscribe.success');
-    Route::get('/subscribe/cancel',  [CheckoutController::class, 'cancel'])
-        ->name('subscribe.cancel');
-
-    // Optional: My subscriptions page (list & cancel)
-    Route::view('/me/subscriptions', 'subscriptions.index')
-        ->name('me.subscriptions');
-
-    // Creator: create plans (already in your stack)
-    Route::post('/plans', [PlanController::class, 'store'])
-        ->name('plans.store');
-
-    // Stripe Connect onboarding (already in your stack)
-    Route::get('/connect/start',   [ConnectOnboardingController::class, 'start'])->name('connect.start');
-    Route::get('/connect/refresh', [ConnectOnboardingController::class, 'refresh'])->name('connect.refresh');
-    Route::get('/connect/return',  [ConnectOnboardingController::class, 'return'])->name('connect.return');
-});
-
-// Webhooks (with signature middleware)
-Route::post('/stripe/webhook', [\App\Http\Controllers\StripeWebhookController::class, 'handle'])
-    ->middleware('stripe.signature')
-    ->name('stripe.webhook');
-// ========== END Auth-only subscription actions ==========
-
-
-Route::middleware(['auth'])->group(function () {
-    Route::post('/creator/{creator}/subscribe/checkout', [ConnectSubscriptionCheckoutController::class, 'start'])
-        ->whereNumber('creator')
-        ->name('creator.subscribe.checkout');
-});
-
-Route::get('/creators/{creator}/subscribe', [CreatorSubscribePageController::class, 'show'])
-    ->middleware(['auth'])
-    ->name('creator.subscribe.page');
-
-Route::middleware('auth')->post('/plans', [PlanController::class, 'store'])
-    ->name('plans.store');
-
+Route::get('/subscribe/{user:name}', [SubscribeByNameController::class, 'callCreatorSubscribe'])
+    ->name('subscribe.byUsername');
+    
 Route::middleware('auth')->group(function () {
     // Creator Monetize page
     Route::view('/dashboard/monetize', 'connect.status')
@@ -96,27 +56,24 @@ Route::middleware('auth')->group(function () {
     Route::view('/subscriptions', 'subscriptions.index')->name('subscriptions.index');
 });
 
-// =========== CANCEL SUBSCRIPTION ===========
+// ---------- Public-ish: show a creator profile + plans ----------
+Route::get('/@{username}', [PostController::class, 'showPosts'])
+    ->name('posts.username');
+
+// ---------- PAYPAL SUBSCRIPTION ROUTES - BEGIN ---------------------------
 Route::middleware('auth')->group(function () {
-    // Cancel at period end
-    Route::post('/subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancelAtPeriodEnd'])
-        ->name('subscriptions.cancel');
+  Route::get('/@{username}', [PayPalController::class,'showCreator'])->name('creator.page'); // profile w/ plans
+  Route::get('/subscribe/{plan:paypal_plan_id}', [PayPalController::class,'show'])->name('paypal.subscribe.show');
+  Route::post('/paypal/verify', [PayPalController::class,'verify'])->name('paypal.subscribe.verify');
+  Route::post('/paypal/cancel', [PayPalController::class,'cancel'])->name('paypal.subscribe.cancel');
 
-    // Cancel immediately (optional separate action)
-    Route::post('/subscriptions/{subscription}/cancel-now', [SubscriptionController::class, 'cancelNow'])
-        ->name('subscriptions.cancel-now');
-
-    // (Optional) Undo a “cancel at period end”
-    Route::post('/subscriptions/{subscription}/resume', [SubscriptionController::class, 'resume'])
-        ->name('subscriptions.resume');
+  Route::get('/creator/plans', [CreatorPlanController::class,'index'])->name('creator.plans.index');
+  Route::post('/creator/plans', [CreatorPlanController::class,'store'])->name('creator.plans.store');
 });
 
-// =========== SHOW POSTS ===============
-Route::get('/view/{username}', [PostController::class, 'showPosts'])
-    ->name('posts.show');
+Route::post('/webhooks/paypal', [PayPalWebhookController::class,'handle'])->name('webhooks.paypal');
 
-Route::get('/subscribe/{user:name}', [SubscribeByNameController::class, 'callCreatorSubscribe'])
-    ->name('subscribe.byUsername');
-    
+
+
 
 require __DIR__.'/auth.php';

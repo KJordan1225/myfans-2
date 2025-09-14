@@ -9,20 +9,31 @@ return new class extends Migration {
     {
         Schema::create('subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('subscriber_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('creator_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('creator_plan_id')->constrained('creator_plans')->cascadeOnDelete();
 
-            $table->string('stripe_subscription_id')->index();
-            $table->string('stripe_customer_id');
-            $table->string('stripe_account_id'); // destination connected account
-            $table->string('status'); // active, trialing, past_due, canceled, incomplete, paused
-            $table->timestamp('current_period_start')->nullable();
-            $table->timestamp('current_period_end')->nullable();
-            $table->boolean('cancel_at_period_end')->default(false);
+            // Fan (subscriber) and Creator
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('creator_id')->constrained('users')->cascadeOnDelete();
+
+            // Provider + IDs (PayPal: provider_subscription_id = "I-XXXX", provider_plan_id = "P-XXXX")
+            $table->string('provider', 32)->default('paypal')->index();
+            $table->string('provider_subscription_id', 100)->unique();
+            $table->string('provider_plan_id', 100)->index();
+
+            // Status examples (PayPal): APPROVAL_PENDING, APPROVED, ACTIVE, SUSPENDED, CANCELLED, EXPIRED, PAST_DUE
+            $table->string('status', 32)->index();
+
+            // Timeline
+            $table->timestamp('starts_at')->nullable();
+            $table->timestamp('ends_at')->nullable();
+
+            // Raw provider payloads, plan details, etc.
+            $table->json('meta')->nullable();
 
             $table->timestamps();
-            $table->unique(['subscriber_id','creator_id'], 'unique_subscriber_creator');
+
+            // Helpful compound index for dashboards/queries
+            $table->index(['creator_id', 'status']);
+            $table->index(['user_id', 'status']);
         });
     }
 
@@ -31,4 +42,5 @@ return new class extends Migration {
         Schema::dropIfExists('subscriptions');
     }
 };
+
 
