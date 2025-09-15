@@ -22,7 +22,8 @@ class PayPalController extends Controller
     public function showCreator(string $username)
     {
         /** @var \App\Models\User $creator */
-        $creator = User::query()->where('username', $username)->firstOrFail();
+        $creator = User::query()->where('name', $username)->firstOrFail();
+        $profile = $creator->profile;
 
         $plans = CreatorPlan::query()
             ->where('creator_id', $creator->id)
@@ -30,7 +31,13 @@ class PayPalController extends Controller
             ->orderBy('amount')
             ->get();
 
-        return view('creator.show', compact('creator', 'plans'));
+        // Get full URL to avatar
+        $avatarUrl = $profile->getFirstMediaUrl('avatar');
+        // Get full URL to banner
+        $bannerUrl = $profile->getFirstMediaUrl('banner');
+
+
+        return view('creator.show', compact('creator', 'plans', 'profile', 'avatarUrl', 'bannerUrl'));
     }
 
     /**

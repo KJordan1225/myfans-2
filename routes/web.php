@@ -62,14 +62,19 @@ Route::get('/@{username}', [PostController::class, 'showPosts'])
 
 // ---------- PAYPAL SUBSCRIPTION ROUTES - BEGIN ---------------------------
 Route::middleware('auth')->group(function () {
-  Route::get('/@{username}', [PayPalController::class,'showCreator'])->name('creator.page'); // profile w/ plans
-  Route::get('/subscribe/{plan:paypal_plan_id}', [PayPalController::class,'show'])->name('paypal.subscribe.show');
-  Route::post('/paypal/verify', [PayPalController::class,'verify'])->name('paypal.subscribe.verify');
-  Route::post('/paypal/cancel', [PayPalController::class,'cancel'])->name('paypal.subscribe.cancel');
+  Route::get('/@{username}', [PayPalController::class,'showCreator'])->name('creator.page');
 
-  Route::get('/creator/plans', [CreatorPlanController::class,'index'])->name('creator.plans.index');
+  // Subscribe flow
+  Route::get('/subscribe/{plan:paypal_plan_id}', [PayPalController::class,'show'])->name('paypal.subscribe.show');
+  Route::post('/paypal/verify',  [PayPalController::class,'verify'])->name('paypal.subscribe.verify');
+  Route::post('/paypal/cancel',  [PayPalController::class,'cancel'])->name('paypal.subscribe.cancel');
+  Route::post('/paypal/switch',  [PayPalController::class,'switchPlan'])->name('paypal.subscribe.switch'); // optional
+
+  // Creator plans
+  Route::get('/creator/plans',  [CreatorPlanController::class,'index'])->name('creator.plans.index');
   Route::post('/creator/plans', [CreatorPlanController::class,'store'])->name('creator.plans.store');
 });
+
 
 Route::post('/webhooks/paypal', [PayPalWebhookController::class,'handle'])->name('webhooks.paypal');
 

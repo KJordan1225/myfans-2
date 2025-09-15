@@ -84,15 +84,7 @@
                         <div class="card-header fw-semibold">User Links</div>
                         <div class="card-body">
                             <h6 class="fw-semibold mb-2">Users</h6>
-                            <ul class="list-unstyled">
-                                @foreach($users as $user)
-                                    <li class="mb-1">
-                                        <a href="{{ route('posts.username', ['username' => $user->name]) }}">
-                                View {{ $user->name }}'s posts
-                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
+                            
                         </div>
                     </div>
 
