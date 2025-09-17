@@ -64,6 +64,13 @@ class PayPalWebhookController extends Controller
             'paypal-transmission-sig'  => $request->header('paypal-transmission-sig'),
         ];
 
+        // Handle test webhook pings. REMOVE.
+        // $event = (string) $request->input('event_type', '');
+        // if ($event === 'BILLING.PLAN.CREATED') {
+        //     \Log::info('Got BILLING.PLAN.CREATED', ['id' => $request->input('id')]);
+        //     return response('ok', 200); // ensure 2xx
+        // }
+
         return $this->paypal->verifyWebhook($headers, $request->getContent());
     }
 

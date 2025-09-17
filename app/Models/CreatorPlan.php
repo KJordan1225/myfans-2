@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class CreatorPlan extends Model {
   protected $fillable = [
     'creator_id','name','currency','amount','interval_unit','interval_count',

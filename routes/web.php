@@ -73,10 +73,15 @@ Route::middleware('auth')->group(function () {
   // Creator plans
   Route::get('/creator/plans',  [CreatorPlanController::class,'index'])->name('creator.plans.index');
   Route::post('/creator/plans', [CreatorPlanController::class,'store'])->name('creator.plans.store');
+  Route::get('/creator/plans/{plan}/edit',[CreatorPlanController::class, 'edit'])->name('creator.plans.edit');
+  Route::put('/creator/plans/{plan}',     [CreatorPlanController::class, 'update'])->name('creator.plans.update');
+
 });
 
+Route::post('/webhooks/paypal', [PayPalWebhookController::class,'handle'])
+  ->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class])
+  ->name('webhooks.paypal');
 
-Route::post('/webhooks/paypal', [PayPalWebhookController::class,'handle'])->name('webhooks.paypal');
 
 
 

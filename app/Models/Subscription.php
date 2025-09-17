@@ -27,5 +27,16 @@ class Subscription extends Model
     public function plan(){ return $this->belongsTo(CreatorPlan::class,'provider_plan_id','paypal_plan_id'); }
     public function user(){ return $this->belongsTo(User::class,'user_id'); }
 
+    /** Active = status ACTIVE and not ended (ends_at null or future) */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'ACTIVE')
+            ->where(function ($q) {
+                $q->whereNull('ends_at')
+                  ->orWhere('ends_at', '>', now());
+            });
+    }
+
+
 
 }

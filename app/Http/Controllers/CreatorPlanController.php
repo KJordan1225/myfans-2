@@ -6,10 +6,16 @@ use App\Models\CreatorPlan;
 use App\Services\PayPalClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+
 
 class CreatorPlanController extends Controller
 {
-  public function __construct(private PayPalClient $pp) {}
+  public function __construct(private PayPalClient $pp)
+  {
+      // $this->middleware('auth');
+  }
+
 
   public function index() {
     $plans = CreatorPlan::where('creator_id', Auth::id())->latest()->get();
