@@ -38,9 +38,58 @@ Route::middleware('auth')->group(function () {
 Route::get('/view/{username}', [PostController::class, 'showPosts'])
     ->name('posts.show');
 
-// ====================STRIPE SUBSCRIPTION ROUTES ==================
-Route::post('/stripe/webhook', StripeWebhookController::class)
-    ->name('stripe.webhook');
+
+/**
+ * Spatie webhook endpoint (two secrets via {configKey})
+ *  - /stripe/webhook/account  (platform events)
+ *  - /stripe/webhook/connect  (connected accounts events)
+ */
+Route::stripeWebhooks('stripe/webhook/{configKey}');
+
+// ---- Creator-facing pages/actions ----
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Simple “Monetize” page that shows current Stripe status + actions (view below)
+    Route::view('/dashboard/monetize', 'connect.status')->name('creator.monetize');
+
+    // Actions that hit your existing controller (from your earlier code)
+    Route::get('/connect/{creator}/start',     [ConnectOnboardingController::class, 'start'])
+        ->name('connect.start');
+    Route::get('/connect/{creator}/return',    [ConnectOnboardingController::class, 'return'])
+        ->name('connect.return');
+    Route::post('/connect/{creator}/dashboard',[ConnectOnboardingController::class, 'dashboard'])
+        ->name('connect.dashboard');
+    Route::post('/connect/{creator}/status',   [ConnectOnboardingController::class, 'status'])
+        ->name('connect.status');
+
+    // (Optional convenience routes for “current user” so you don’t need the {creator} param)
+    Route::get('/me/connect/start', function () {
+        return redirect()->route('connect.start', auth()->id());
+    })->name('connect.start.me');
+
+    Route::get('/me/connect/return', function () {
+        return redirect()->route('connect.return', auth()->id());
+    })->name('connect.return.me');
+
+    Route::post('/me/connect/dashboard', function () {
+        return redirect()->route('connect.dashboard', auth()->id());
+    })->name('connect.dashboard.me');
+
+    Route::post('/me/connect/status', function () {
+        return redirect()->route('connect.status', auth()->id());
+    })->name('connect.status.me');
+});
+
+// ---- Dev/Admin: view recent webhook calls (guard as you like) ----
+Route::middleware(['auth'])->group(function () {
+    Route::get('/dev/webhooks', function () {
+        $calls = \Spatie\WebhookClient\Models\WebhookCall::latest()->limit(25)->get();
+        return view('dev.webhooks', compact('calls'));
+    })->name('dev.webhooks');
+});
+
+// ===== END Creator-facing pages/actions =====
+
+
 
 
 require __DIR__.'/auth.php';
