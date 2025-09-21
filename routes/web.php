@@ -17,6 +17,7 @@ use App\Http\Controllers\ConnectSubscriptionCheckoutController;
 use App\Http\Controllers\SubscribeByNameController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\CreatorPlanController;
+use App\Http\Controllers\SubscribeController;
 
 
 
@@ -101,6 +102,24 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::delete('/creator/plans/{plan}',  [CreatorPlanController::class, 'destroy'])->name('creator.plans.destroy');
 });
 // ===== END Creator Plans (CRUD) =====
+
+// ---- Fan Subscriptions ----
+Route::middleware(['auth','verified'])->group(function () {
+    // Browse creator's plans
+    Route::get('/subscribe/{creator}', [SubscribeController::class, 'showPlans'])->name('subscribe.show');
+
+    // Start checkout for a specific plan
+    Route::post('/subscribe/start/{plan}', [SubscribeController::class, 'start'])->name('subscribe.start');
+
+    // Success/cancel returns
+    Route::get('/subscribe/success', [SubscribeController::class, 'success'])->name('subscribe.success');
+    Route::get('/subscribe/cancelled/{creator}', [SubscribeController::class, 'cancelled'])->name('subscribe.cancelled');
+
+    // Manage my subscriptions
+    Route::get('/subscriptions/mine', [SubscribeController::class, 'mine'])->name('subscriptions.mine');
+    Route::post('/subscriptions/{subscription}/cancel', [SubscribeController::class, 'cancel'])->name('subscriptions.cancel');
+});
+// ===== END Fan Subscriptions =====
 
 
 
