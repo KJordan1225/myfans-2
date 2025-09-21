@@ -7,13 +7,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\ConnectOnboardingController;
 use App\Http\Controllers\CreatorSubscribePageController;
-use App\Http\Controllers\ConnectSubscriptionCheckoutController;
 use App\Http\Controllers\SubscribeByNameController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\CreatorPlanController;
@@ -24,6 +22,9 @@ use App\Http\Controllers\SubscribeController;
 Route::get('/', function () {
     return view('welcome'); 
 });
+
+Route::get('/subscribe/success', [SubscribeController::class, 'success'])
+    ->name('subscribe.success');
 
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
@@ -112,10 +113,9 @@ Route::middleware(['auth','verified'])->group(function () {
     // Start checkout for a specific plan
     Route::post('/subscribe/start/{plan}', [SubscribeController::class, 'start'])->name('subscribe.start');
 
-    // Success/cancel returns
-    Route::get('/subscribe/success', [\App\Http\Controllers\SubscribeController::class, 'success'])
-        ->name('subscribe.success');    
-    Route::get('/subscribe/cancelled/{creator}', [\App\Http\Controllers\SubscribeController::class, 'cancelled'])
+    // Success/cancel returns  
+          
+    Route::get('/subscribe/cancelled/{creator}', [SubscribeController::class, 'cancelled'])
         ->name('subscribe.cancelled');
 
 
