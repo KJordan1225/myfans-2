@@ -58,7 +58,7 @@
                 <p class="text-muted">
                     You don’t have a Stripe Connect account yet. Start onboarding to accept fan subscriptions
                     and receive payouts directly to your bank.
-                </p>
+                </p>                
                 <a class="btn btn-primary"
                    href="{{ route('connect.start', $user) }}">
                     Start Stripe Onboarding

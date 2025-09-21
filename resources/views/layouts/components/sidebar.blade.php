@@ -54,7 +54,7 @@
             <div class="collapse {{ request()->routeIs('admin.subcategories.index') || request()->routeIs('admin.subcategories.create') || request()->routeIs('admin.subcategories.edit') ? 'show' : ''}}" id="subcategory-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li>
-                        <a href="{{ route('creator.plans.index') }}" 
+                        <a href="{{ route('creator.monetize') }}" 
                             class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded"
                             style="font-size: 16px; color: black;
                         >
@@ -91,7 +91,7 @@
             <div class="collapse {{ request()->routeIs('admin.childcategories.index') || request()->routeIs('admin.childcategories.create') || request()->routeIs('admin.childcategories.edit') ? 'show' : ''}}" id="childcategory-collapse">
                 <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
                     <li>
-                        <a href="{{ route('subscriptions.index') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
+                        <a href="#" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
                            <i class="fas fa-table me-1"></i> My Subscriptions
                         </a>
                     </li>                    

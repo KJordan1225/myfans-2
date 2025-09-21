@@ -49,7 +49,8 @@ Route::stripeWebhooks('stripe/webhook/{configKey}');
 // ---- Creator-facing pages/actions ----
 Route::middleware(['auth', 'verified'])->group(function () {
     // Simple “Monetize” page that shows current Stripe status + actions (view below)
-    Route::view('/dashboard/monetize', 'connect.status')->name('creator.monetize');
+    Route::view('/dashboard/monetize', 'connect.status')
+        ->name('creator.monetize');
 
     // Actions that hit your existing controller (from your earlier code)
     Route::get('/connect/{creator}/start',     [ConnectOnboardingController::class, 'start'])
@@ -86,6 +87,9 @@ Route::middleware(['auth'])->group(function () {
         return view('dev.webhooks', compact('calls'));
     })->name('dev.webhooks');
 });
+
+
+
 
 // ===== END Creator-facing pages/actions =====
 
