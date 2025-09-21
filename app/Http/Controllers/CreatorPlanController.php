@@ -1,46 +1,102 @@
 <?php
+// app/Http/Controllers/CreatorPlanController.php
 
 namespace App\Http\Controllers;
 
 use App\Models\CreatorPlan;
-use App\Services\PayPalClient;
+use App\Services\PlanStripeService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Routing\Controllers\Middleware;
 
 class CreatorPlanController extends Controller
 {
-  public function __construct(private PayPalClient $pp)
-  {
-      // $this->middleware('auth');
-  }
+    public static function middleware(): array
+{
+    return [
+        // Apply to the entire controller:
+        'auth',
+        'verified',
+      ];
+}
 
+    public function index(Request $request)
+    {
+        $plans = CreatorPlan::where('creator_id', $request->user()->id)
+            ->orderByDesc('created_at')->get();
 
-  public function index() {
-    $plans = CreatorPlan::where('creator_id', Auth::id())->latest()->get();
-    return view('creator.plans.index', compact('plans'));
-  }
+        return view('creator.plans.index', compact('plans'));
+    }
 
-  public function store(Request $r) {
-    $data = $r->validate([
-      'name'=>'required|string|max:120',
-      'amount'=>'required|numeric|min:1',
-      'currency'=>'required|string|size:3',
-      'interval_unit'=>'required|in:DAY,WEEK,MONTH,YEAR',
-      'interval_count'=>'required|integer|min:1|max:12',
-    ]);
-    $data['creator_id'] = Auth::id();
+    public function create()
+    {
+        return view('creator.plans.create');
+    }
 
-    // Create PayPal product + plan for this creator
-    $product = $this->pp->createProduct("{$r->user()->name} Membership", "Subscription for @{$r->user()->username}");
-    $plan = $this->pp->createPlan($product['id'], $data['name'], $data['currency'], (string)$data['amount'], $data['interval_unit'], (int)$data['interval_count']);
+    public function store(Request $r, PlanStripeService $planStripe)
+    {
+        $data = $r->validate([
+            'name'        => ['required','string','max:120'],
+            'price'       => ['required','numeric','min:1'], // dollars entered in form
+            'currency'    => ['required','string','size:3'],
+            'interval'    => ['required','in:day,week,month,year'],
+            'is_active'   => ['nullable','boolean'],
+        ]);
 
-    $data['paypal_product_id'] = $product['id'];
-    $data['paypal_plan_id'] = $plan['id'];
+        $plan = CreatorPlan::create([
+            'creator_id'  => $r->user()->id,
+            'name'        => $data['name'],
+            'price_cents' => (int) round($data['price'] * 100),
+            'currency'    => strtolower($data['currency']),
+            'interval'    => $data['interval'],
+            'is_active'   => (bool)($data['is_active'] ?? false),
+        ]);
 
-    $plan = CreatorPlan::create($data);
+        // Push to Stripe (connected account)
+        $planStripe->ensurePrice($plan);
 
-    return back()->with('success','Plan created.');
-  }
+        return redirect()->route('creator.plans.index')
+            ->with('success', 'Plan created and synced to Stripe.');
+    }
+
+    public function edit(CreatorPlan $plan)
+    {
+        Gate::authorize('update', $plan->creator); // reuse your UserPolicy
+        return view('creator.plans.edit', compact('plan'));
+    }
+
+    public function update(Request $r, CreatorPlan $plan, PlanStripeService $planStripe)
+    {
+        Gate::authorize('update', $plan->creator);
+
+        $data = $r->validate([
+            'name'        => ['required','string','max:120'],
+            'price'       => ['required','numeric','min:1'],
+            'currency'    => ['required','string','size:3'],
+            'interval'    => ['required','in:day,week,month,year'],
+            'is_active'   => ['nullable','boolean'],
+        ]);
+
+        $plan->fill([
+            'name'        => $data['name'],
+            'price_cents' => (int) round($data['price'] * 100),
+            'currency'    => strtolower($data['currency']),
+            'interval'    => $data['interval'],
+            'is_active'   => (bool)($data['is_active'] ?? false),
+        ])->save();
+
+        // Creating a new Price captures any changes
+        $planStripe->ensurePrice($plan);
+
+        return redirect()->route('creator.plans.index')
+            ->with('success', 'Plan updated and synced to Stripe.');
+    }
+
+    public function destroy(CreatorPlan $plan)
+    {
+        Gate::authorize('update', $plan->creator);
+        $plan->delete();
+        return redirect()->route('creator.plans.index')
+            ->with('success', 'Plan deleted.');
+    }
 }

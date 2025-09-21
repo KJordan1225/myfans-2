@@ -10,144 +10,49 @@
 			
 
 <div class="container py-4">
-    <div class="row justify-content-center">
-        <div class="col-lg-9">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h4 mb-0">My Plans</h1>
+        <a href="{{ route('creator.plans.create') }}" class="btn btn-primary">New Plan</a>
+    </div>
 
-            <h2 class="mb-3">Your Membership Plans</h2>
+    @if($plans->isEmpty())
+        <div class="alert alert-info">
+            You don’t have any plans yet. Create at least one plan so fans can subscribe.
+        </div>
+    @endif
 
-            {{-- Flash toasts --}}
-            @if(session('success'))
-                <div class="alert alert-success">{{ session('success') }}</div>
-            @endif
-            @if(session('error'))
-                <div class="alert alert-danger">{{ session('error') }}</div>
-            @endif
-
-            {{-- Create Plan --}}
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">Create a Plan</h5>
-                    <form action="{{ route('creator.plans.store') }}" method="POST" class="row g-3">
-                        @csrf
-
-                        <div class="col-md-6">
-                            <label class="form-label">Plan name</label>
-                            <input type="text" name="name" class="form-control @error('name') is-invalid @enderror"
-                                   value="{{ old('name') }}" placeholder="Monthly $9.99" required>
-                            @error('name') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Amount</label>
-                            <input type="number" step="0.01" min="1" name="amount"
-                                   class="form-control @error('amount') is-invalid @enderror"
-                                   value="{{ old('amount', '9.99') }}" required>
-                            @error('amount') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <div class="col-md-3">
-                            <label class="form-label">Currency</label>
-                            <input type="text" name="currency" maxlength="3"
-                                   class="form-control text-uppercase @error('currency') is-invalid @enderror"
-                                   value="{{ old('currency', 'USD') }}" required>
-                            @error('currency') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Interval unit</label>
-                            <select name="interval_unit" class="form-select @error('interval_unit') is-invalid @enderror" required>
-                                @php $units = ['DAY','WEEK','MONTH','YEAR']; @endphp
-                                @foreach($units as $u)
-                                    <option value="{{ $u }}" @selected(old('interval_unit','MONTH') === $u)>{{ $u }}</option>
-                                @endforeach
-                            </select>
-                            @error('interval_unit') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <div class="col-md-4">
-                            <label class="form-label">Interval count</label>
-                            <input type="number" min="1" max="12" name="interval_count"
-                                   class="form-control @error('interval_count') is-invalid @enderror"
-                                   value="{{ old('interval_count', 1) }}" required>
-                            @error('interval_count') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                        </div>
-
-                        <div class="col-md-4 d-flex align-items-end">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="active" id="active" value="1"
-                                       @checked(old('active', true))>
-                                <label class="form-check-label" for="active">Active</label>
-                            </div>
-                        </div>
-
-                        <div class="col-12">
-                            <button class="btn btn-primary">Create Plan on PayPal</button>
-                        </div>
+    <div class="list-group">
+        @foreach($plans as $plan)
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-semibold">{{ $plan->name }}</div>
+                    <div class="small text-muted">{{ $plan->price_for_humans }}</div>
+                    <div class="small">{{ $plan->is_active ? 'Active' : 'Inactive' }}</div>
+                </div>
+                <div class="d-flex gap-2">
+                    <a class="btn btn-sm btn-outline-secondary" href="{{ route('creator.plans.edit', $plan) }}">Edit</a>
+                    <form method="POST" action="{{ route('creator.plans.destroy', $plan) }}">
+                        @csrf @method('DELETE')
+                        <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Delete this plan?')">Delete</button>
                     </form>
                 </div>
             </div>
-
-            {{-- Existing Plans --}}
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title mb-3">Existing Plans</h5>
-
-                    @if($plans->isEmpty())
-                        <div class="text-muted">No plans yet. Create one above.</div>
-                    @else
-                        <div class="table-responsive">
-                            <table class="table align-middle">
-                                <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Price</th>
-                                    <th>Interval</th>
-                                    <th>Status</th>
-                                    <th>PayPal Product</th>
-                                    <th>PayPal Plan</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                @foreach($plans as $p)
-                                    <tr>
-                                        <td>{{ $p->name }}</td>
-                                        <td>{{ $p->currency }} {{ number_format($p->amount, 2) }}</td>
-                                        <td>
-                                            @if($p->interval_count == 1)
-                                                {{ $p->interval_unit }}
-                                            @else
-                                                every {{ $p->interval_count }} {{ strtolower($p->interval_unit) }}s
-                                            @endif
-                                        </td>
-                                        <td>
-                                            @if($p->active)
-                                                <span class="badge bg-success">Active</span>
-                                            @else
-                                                <span class="badge bg-secondary">Inactive</span>
-                                            @endif
-                                        </td>
-                                        <td class="text-truncate" style="max-width: 160px;">
-                                            <code>{{ $p->paypal_product_id ?? '—' }}</code>
-                                        </td>
-                                        <td class="text-truncate" style="max-width: 200px;">
-                                            <code>{{ $p->paypal_plan_id ?? '—' }}</code>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    @endif
-                </div>
-            </div>
-
-        </div>
+        @endforeach
     </div>
 </div>
-
  
             </div>
         </div>
       </div>
     </div>
+	
+{{-- SweetAlert2 --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if(session('success'))
+<script>Swal.fire({icon:'success',title:'Success',text:@json(session('success')),timer:2200,showConfirmButton:false});</script>
+@endif
+@if(session('needs_plan'))
+<script>Swal.fire({icon:'info',title:'Create your first plan',text:'To start earning from followers, create at least one subscription plan.',confirmButtonText:'Create a plan'}).then(()=>{window.location='{{ route('creator.plans.create') }}'});</script>
+@endif
+
 @endsection

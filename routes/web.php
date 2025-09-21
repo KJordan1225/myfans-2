@@ -16,6 +16,7 @@ use App\Http\Controllers\CreatorSubscribePageController;
 use App\Http\Controllers\ConnectSubscriptionCheckoutController;
 use App\Http\Controllers\SubscribeByNameController;
 use App\Http\Controllers\StripeWebhookController;
+use App\Http\Controllers\CreatorPlanController;
 
 
 
@@ -87,11 +88,19 @@ Route::middleware(['auth'])->group(function () {
         return view('dev.webhooks', compact('calls'));
     })->name('dev.webhooks');
 });
-
-
-
-
 // ===== END Creator-facing pages/actions =====
+
+
+// ---- Creator Plans (CRUD) ----
+Route::middleware(['auth','verified'])->group(function () {
+    Route::get('/creator/plans',            [CreatorPlanController::class, 'index'])->name('creator.plans.index');
+    Route::get('/creator/plans/create',     [CreatorPlanController::class, 'create'])->name('creator.plans.create');
+    Route::post('/creator/plans',           [CreatorPlanController::class, 'store'])->name('creator.plans.store');
+    Route::get('/creator/plans/{plan}/edit',[CreatorPlanController::class, 'edit'])->name('creator.plans.edit');
+    Route::put('/creator/plans/{plan}',     [CreatorPlanController::class, 'update'])->name('creator.plans.update');
+    Route::delete('/creator/plans/{plan}',  [CreatorPlanController::class, 'destroy'])->name('creator.plans.destroy');
+});
+// ===== END Creator Plans (CRUD) =====
 
 
 

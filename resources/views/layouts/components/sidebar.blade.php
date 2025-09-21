@@ -56,9 +56,25 @@
                     <li>
                         <a href="{{ route('creator.monetize') }}" 
                             class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded"
-                            style="font-size: 16px; color: black;
+                            style="font-size: 16px; color: black;"
                         >
-                           <i class="fas fa-list me-1"></i>Create Account Plans
+                           <i class="fas fa-list me-1"></i>Onboard with Stripe
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('creator.plans.index') }}" 
+                            class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded"
+                            style="font-size: 16px; color: black;"
+                        >
+                           <i class="fas fa-list me-1"></i>View Subscription Plans
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('creator.plans.create') }}" 
+                            class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded"
+                            style="font-size: 16px; color: black;"
+                        >
+                           <i class="fas fa-list me-1"></i>Create Subscription Plans
                         </a>
                     </li>
                     <li>                        
