@@ -41,12 +41,13 @@ class SubscribeController extends Controller
         $acct = $plan->creator->profile?->stripe_account_id;
         if (! $acct) return back()->with('error','Creator is not onboarded to Stripe.');
 
-        $success = route('subscribe.success') . '?acct='.$acct;
-        // $success = route('subscribe.success');
+        // $success = route('subscribe.success') . '?acct='.$acct;
+        $success = route('subscribe.success');
         $cancel  = route('subscribe.cancelled', ['creator' => $plan->creator_id]);
 
         try {
             $url = $svc->startCheckout($follower, $plan, $success, $cancel);
+            // dd($url);
             return redirect()->away($url);
         } catch (\Throwable $e) {
             return back()->with('error', $e->getMessage());

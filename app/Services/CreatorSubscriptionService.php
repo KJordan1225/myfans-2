@@ -23,7 +23,7 @@ class CreatorSubscriptionService
         if (! $acct) throw new \RuntimeException('Creator is not onboarded to Stripe.');
 
         if (! $plan->stripe_price_id) throw new \RuntimeException('Plan does not have a Stripe price.');
-
+        
         // Create a Checkout Session on the CONNECTED ACCOUNT
         $session = $this->stripe->checkout->sessions->create([
             'mode'        => 'subscription',
