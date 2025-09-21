@@ -131,7 +131,7 @@ class PostController extends Controller
             ->where('name', $username)            
             ->first();
 
-        $sub = Subscription::where('subscriber_id', Auth::id())
+        $sub = Subscription::where('user_id', Auth::id())
             ->where('creator_id', $creator->id)
             ->first(); 
 
@@ -141,8 +141,6 @@ class PostController extends Controller
             ->where('user_id', $creator->id)
             ->latest()
             ->paginate(5); // 10 per page; tweak as needed 
-
-        // dd($posts->first()->getMedia());
 
         return view('posts.show', compact('creator', 'posts', 'sub'));
     }     

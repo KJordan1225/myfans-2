@@ -7,16 +7,21 @@ use App\Models\CreatorPlan;
 use App\Models\Subscription;
 use App\Services\CreatorSubscriptionService;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\Middleware;
 
 class SubscribeController extends Controller
 {
-    public function __construct()
+    public static function middleware(): array
     {
-        $this->middleware(['auth','verified']);
+        return [
+            // Apply to the entire controller:
+            'auth',
+            'verified',
+        ];
     }
 
     // Show creator's active plans for a fan to subscribe
-    public function showPlans(Request $request, int $creatorId)
+    public function showPlans(Request $request, $creatorId)
     {
         $plans = \App\Models\CreatorPlan::where('creator_id', $creatorId)
             ->where('is_active', true)
@@ -37,6 +42,7 @@ class SubscribeController extends Controller
         if (! $acct) return back()->with('error','Creator is not onboarded to Stripe.');
 
         $success = route('subscribe.success') . '?acct='.$acct;
+        // $success = route('subscribe.success');
         $cancel  = route('subscribe.cancelled', ['creator' => $plan->creator_id]);
 
         try {
@@ -50,6 +56,7 @@ class SubscribeController extends Controller
     // Success return → persist subscription by reading Checkout Session
     public function success(Request $request, CreatorSubscriptionService $svc)
     {
+               
         $sessionId = $request->string('session_id')->value();
         if (! $sessionId) return redirect()->route('dashboard')->with('warning','Missing session id.');
 

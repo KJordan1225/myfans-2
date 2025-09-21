@@ -15,7 +15,7 @@
         Posts by {{ $creator->name }}
     </h1>
 
-    <a href="{{ route('subscribe.byUsername', $creator->name) }}" class="btn btn-primary">
+    <a href="{{ route('subscribe.show', $creator) }}" class="btn btn-primary">
         Subscribe to {{ $creator->name }}
     </a>
 

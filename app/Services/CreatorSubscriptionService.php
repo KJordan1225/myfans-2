@@ -18,7 +18,7 @@ class CreatorSubscriptionService
      * Returns the hosted url.
      */
     public function startCheckout(User $follower, CreatorPlan $plan, string $successUrl, string $cancelUrl): string
-    {
+    {        
         $acct = $plan->creator->profile?->stripe_account_id;
         if (! $acct) throw new \RuntimeException('Creator is not onboarded to Stripe.');
 
@@ -28,7 +28,7 @@ class CreatorSubscriptionService
         $session = $this->stripe->checkout->sessions->create([
             'mode'        => 'subscription',
             'line_items'  => [[ 'price' => $plan->stripe_price_id, 'quantity' => 1 ]],
-            'success_url' => $successUrl . '?session_id={CHECKOUT_SESSION_ID}&acct={$acct}',
+            'success_url' => $successUrl . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url'  => $cancelUrl,
             'metadata'    => [
                 'follower_id' => (string) $follower->id,

@@ -106,7 +106,8 @@ Route::middleware(['auth','verified'])->group(function () {
 // ---- Fan Subscriptions ----
 Route::middleware(['auth','verified'])->group(function () {
     // Browse creator's plans
-    Route::get('/subscribe/{creator}', [SubscribeController::class, 'showPlans'])->name('subscribe.show');
+    Route::get('/subscribe/{creator}', [SubscribeController::class, 'showPlans'])
+        ->name('subscribe.show');
 
     // Start checkout for a specific plan
     Route::post('/subscribe/start/{plan}', [SubscribeController::class, 'start'])->name('subscribe.start');
@@ -122,6 +123,9 @@ Route::middleware(['auth','verified'])->group(function () {
 // ===== END Fan Subscriptions =====
 
 
+// ---------- Public-ish: show a creator profile + plans ----------
+Route::get('/@{username}', [PostController::class, 'showPosts'])
+    ->name('posts.username');
 
 
 require __DIR__.'/auth.php';

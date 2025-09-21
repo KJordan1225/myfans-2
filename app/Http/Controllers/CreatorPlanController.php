@@ -12,13 +12,13 @@ use Illuminate\Routing\Controllers\Middleware;
 class CreatorPlanController extends Controller
 {
     public static function middleware(): array
-{
-    return [
-        // Apply to the entire controller:
-        'auth',
-        'verified',
-      ];
-}
+    {
+        return [
+            // Apply to the entire controller:
+            'auth',
+            'verified',
+        ];
+    }
 
     public function index(Request $request)
     {

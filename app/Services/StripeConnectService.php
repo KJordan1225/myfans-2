@@ -67,7 +67,7 @@ class StripeConnectService
             'mode' => 'subscription',
             'customer' => $customerId,
             'line_items' => [[ 'price' => $plan->stripe_price_id, 'quantity' => 1 ]],
-            'success_url' => $successUrl.'?session_id={CHECKOUT_SESSION_ID}',
+            'success_url' => $successUrl.'&session_id={CHECKOUT_SESSION_ID}',
             'cancel_url'  => $cancelUrl,
             'subscription_data' => [
                 'application_fee_percent' => (float) $plan->platform_fee_percent,
