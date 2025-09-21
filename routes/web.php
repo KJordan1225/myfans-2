@@ -113,8 +113,11 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::post('/subscribe/start/{plan}', [SubscribeController::class, 'start'])->name('subscribe.start');
 
     // Success/cancel returns
-    Route::get('/subscribe/success', [SubscribeController::class, 'success'])->name('subscribe.success');
-    Route::get('/subscribe/cancelled/{creator}', [SubscribeController::class, 'cancelled'])->name('subscribe.cancelled');
+    Route::get('/subscribe/success', [\App\Http\Controllers\SubscribeController::class, 'success'])
+        ->name('subscribe.success');    
+    Route::get('/subscribe/cancelled/{creator}', [\App\Http\Controllers\SubscribeController::class, 'cancelled'])
+        ->name('subscribe.cancelled');
+
 
     // Manage my subscriptions
     Route::get('/subscriptions/mine', [SubscribeController::class, 'mine'])->name('subscriptions.mine');

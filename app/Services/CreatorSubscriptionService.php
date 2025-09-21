@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Models\CreatorPlan;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Models\CheckoutSession;
 use Illuminate\Support\Str;
 use Stripe\StripeClient;
 
@@ -18,17 +19,19 @@ class CreatorSubscriptionService
      * Returns the hosted url.
      */
     public function startCheckout(User $follower, CreatorPlan $plan, string $successUrl, string $cancelUrl): string
-    {        
+    {
         $acct = $plan->creator->profile?->stripe_account_id;
         if (! $acct) throw new \RuntimeException('Creator is not onboarded to Stripe.');
 
         if (! $plan->stripe_price_id) throw new \RuntimeException('Plan does not have a Stripe price.');
-        
+
+        $successWithSession = $successUrl . '?session_id={CHECKOUT_SESSION_ID}';
+        dd($successWithSession);
         // Create a Checkout Session on the CONNECTED ACCOUNT
         $session = $this->stripe->checkout->sessions->create([
             'mode'        => 'subscription',
             'line_items'  => [[ 'price' => $plan->stripe_price_id, 'quantity' => 1 ]],
-            'success_url' => $successUrl . '?session_id={CHECKOUT_SESSION_ID}',
+            'success_url' => $successWithSession,
             'cancel_url'  => $cancelUrl,
             'metadata'    => [
                 'follower_id' => (string) $follower->id,
@@ -81,7 +84,7 @@ class CreatorSubscriptionService
                 'current_period_end' => isset($sub->current_period_end) ? now()->createFromTimestamp($sub->current_period_end) : null,
             ]
         );
-    }
+    }    
 
     /**
      * Cancel at period end.
@@ -106,4 +109,11 @@ class CreatorSubscriptionService
 
         return $subscription;
     }
+
+    private function appendQuery(string $url, array $params): string
+    {
+        $hasQuery = parse_url($url, PHP_URL_QUERY) !== null;
+        return $url . ($hasQuery ? '&' : '?') . http_build_query($params);
+    }
+
 }
