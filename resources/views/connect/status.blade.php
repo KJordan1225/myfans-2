@@ -76,10 +76,10 @@
 
                 <div class="d-flex gap-2 flex-wrap">
                     {{-- Refresh flags via API pull --}}
-                    <form method="POST" action="{{ route('connect.status', $user) }}">
+                    <!-- <form method="POST" action="{{ route('connect.status', $user) }}">
                         @csrf
                         <button class="btn btn-secondary">Refresh Status</button>
-                    </form>
+                    </form> -->
 
                     {{-- Open Express Dashboard --}}
                     <form method="POST" action="{{ route('connect.dashboard', $user) }}">

@@ -26,7 +26,7 @@ Route::get('/', function () {
 Route::get('/subscribe/success', [SubscribeController::class, 'success'])
     ->name('subscribe.success');
 
-stagingRoute::middleware('auth')->group(function () {
+Route::middleware('auth')->group(function () {
     Route::post('/connect/status', [ConnectOnboardingController::class, 'status'])
         ->name('connect.status');
 });
