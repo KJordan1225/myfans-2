@@ -81,17 +81,8 @@
                         <a href="{{ route('creator.posts.list') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
                            <i class="fas fa-layer-group me-1"></i>Posts
                         </a>
-                    </li>                    
-                    <!-- <li>
-                        <a href="{{ route('creator.subscription.show') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
-                           <i class="fas fa-list me-1"></i> Show Subscription Plan
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('creator.subscription.subscribers') }}" class="link-body-emphasis d-inline-flex align-items-center text-decoration-none rounded">
-                           <i class="fas fa-list me-1"></i>List Subscribers
-                        </a>
-                    </li>                                          -->
+                    </li>                   
+                                      
                 </ul>                
             </div>
         </li>

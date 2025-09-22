@@ -187,6 +187,7 @@
                                 id="is_creator"
                                 name="is_creator"
                                 value="1"
+                                style="border: 2px solid #6f42c1;"
                                 {{ old('is_creator', (int) ($profile->is_creator ?? 0)) ? 'checked' : '' }}
                             >
                             <label class="form-check-label" 

@@ -73,7 +73,48 @@ class DatabaseSeeder extends Seeder
             'display_name' => 'Test User 3',
         ]);
 
-        $user->assignRole('subscriber');        
+        $user->assignRole('subscriber');
+        
+        // Create CREATORS
+
+        $user = User::factory()->create([
+            'name' => 'Creator 1',
+            'email' => 'creator1@example.com',
+            'password' => Hash::make('Welc0me!1225'),
+        ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Creator 1',
+        ]);
+
+        $user->assignRole('subscriber');
+
+        $user = User::factory()->create([
+            'name' => 'Creator 2',
+            'email' => 'creator2@example.com',
+            'password' => Hash::make('Welc0me!1225'),
+        ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Creator 2',
+        ]);
+
+        $user->assignRole('subscriber');
+
+        $user = User::factory()->create([
+            'name' => 'Creator 3',
+            'email' => 'creator3@example.com',
+            'password' => Hash::make('Welc0me!1225'),
+        ]);
+
+        $user_profile = UserProfile::create([
+            'user_id' => $user->id,
+            'display_name' => 'Creator 3',
+        ]);
+
+        $user->assignRole('subscriber');
 
     }
 }
