@@ -20,6 +20,15 @@
             @yield('content')            
         </div>
         @include('sweetalert2::index')
+
+        @if (session('swal'))
+        <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            Swal.fire(@json(session('swal')));
+        });
+        </script>
+        @endif
+
         <!-- Jquery JS -->
         <script
             src="https://code.jquery.com/jquery-3.7.1.min.js"

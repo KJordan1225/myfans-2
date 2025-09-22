@@ -8,6 +8,7 @@ use App\Models\Subscription;
 use App\Services\CreatorSubscriptionService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\Middleware;
+use App\Exceptions\CreatorNotOnboardedException;
 
 class SubscribeController extends Controller
 {
@@ -38,17 +39,23 @@ class SubscribeController extends Controller
     {
         $follower = $request->user();
 
-        $acct = $plan->creator->profile?->stripe_account_id;
-        if (! $acct) return back()->with('error','Creator is not onboarded to Stripe.');
-
-        $success = route('subscribe.success') . '?acct='.$acct;
-        $cancel  = route('subscribe.cancelled', ['creator' => $plan->creator_id]);
-
         try {
+            // this will throw if not onboarded
+            $acct = $svc->connectedAccountOrFail($plan->creator);
+
+            $success = route('subscribe.success').'?acct='.$acct;
+            $cancel  = route('subscribe.cancelled', ['creator' => $plan->creator_id]);
+
             $url = $svc->startCheckout($follower, $plan, $success, $cancel);
             return redirect()->away($url);
-        } catch (\Throwable $e) {
-            return back()->with('error', $e->getMessage());
+
+        } catch (CreatorNotOnboardedException|\RuntimeException $e) {
+            // Flash a payload your Blade can feed into Swal.fire(...)
+            return back()->with('swal', [
+                'icon'  => 'warning',
+                'title' => 'Action needed',
+                'text'  => $e->getMessage(),
+            ]);
         }
     }
 

@@ -6,6 +6,7 @@ namespace App\Services;
 use App\Models\CreatorPlan;
 use App\Models\User;
 use Stripe\StripeClient;
+use App\Exceptions\CreatorNotOnboardedException;
 
 class PlanStripeService
 {
@@ -66,14 +67,14 @@ class PlanStripeService
         $plan->save();
 
         return $plan->stripe_price_id;
-    }
+    } 
 
     private function connectedAccountOrFail(User $creator): string
     {
         $acct = $creator->profile?->stripe_account_id;
         if (!$acct) {
-            throw new \RuntimeException('Creator is not onboarded to Stripe Connect.');
-        }
+            throw new CreatorNotOnboardedException();
+        }        
         return $acct;
     }
 }

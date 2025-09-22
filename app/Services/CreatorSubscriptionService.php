@@ -8,6 +8,8 @@ use App\Models\Subscription;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Stripe\StripeClient;
+use App\Exceptions\CreatorNotOnboardedException;
+
 
 class CreatorSubscriptionService
 {
@@ -106,4 +108,24 @@ class CreatorSubscriptionService
 
         return $subscription;
     }
+
+     /**
+     * Get the creator's Stripe Connected Account ID or fail.
+     *
+     * @throws \App\Exceptions\CreatorNotOnboardedException
+     */
+    public function connectedAccountOrFail(User $creator): string
+    {
+        // Defensive: make sure the profile relation is loaded/available
+        $profile = $creator->profile;
+
+        // 1) Must have a profile and a saved Connect account ID
+        $acct = $profile?->stripe_account_id;
+        if (empty($acct)) {
+            throw new CreatorNotOnboardedException('Creator is not onboarded to Stripe Connect.');
+        }       
+
+        return $acct;
+    }
+
 }
