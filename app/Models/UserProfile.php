@@ -37,14 +37,12 @@ class UserProfile extends Model implements HasMedia
         'stripe_default_currency',
         'stripe_requirements',
         'stripe_customer_id',
-        'stripe_onboarded_at',
     ];
 
     // Cast fields to appropriate types
     protected $casts = [
         'is_creator' => 'boolean',
         'balance' => 'decimal:2',
-        'stripe_onboarded_at' => 'datetime'
     ];
 
     /**

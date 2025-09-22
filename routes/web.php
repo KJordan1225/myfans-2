@@ -26,9 +26,14 @@ Route::get('/', function () {
 Route::get('/subscribe/success', [SubscribeController::class, 'success'])
     ->name('subscribe.success');
 
+stagingRoute::middleware('auth')->group(function () {
+    Route::post('/connect/status', [ConnectOnboardingController::class, 'status'])
+        ->name('connect.status');
+});
+
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
-    ->name('dashboard');
+    ->name('dashboard');    
 
 Route::middleware('auth')->group(function () {
     Route::resource('user-profile', UserProfileController::class);
@@ -62,8 +67,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('connect.return');
     Route::post('/connect/{creator}/dashboard',[ConnectOnboardingController::class, 'dashboard'])
         ->name('connect.dashboard');
-    Route::post('/connect/{creator}/status',   [ConnectOnboardingController::class, 'status'])
-        ->name('connect.status');
+    
 
     // (Optional convenience routes for “current user” so you don’t need the {creator} param)
     Route::get('/me/connect/start', function () {
