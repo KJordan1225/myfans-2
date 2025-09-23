@@ -11,6 +11,51 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
         <!-- Custom Styles -->
+        <style>
+            :root {
+                --admin-sidebar-width: 260px;
+            }
+            body {
+                min-height: 100vh;
+                display: flex;
+                background: #f8f9fa;
+            }
+            .admin-sidebar {
+                width: var(--admin-sidebar-width);
+                background: #1f1f2e; /* deep purple/indigo vibe */
+                color: #fff;
+                position: sticky;
+                top: 0;
+                height: 100vh;
+                overflow-y: auto;
+                box-shadow: 0 0 30px rgba(0,0,0,0.1);
+            }
+            .admin-brand {
+                font-weight: 700;
+                font-size: 1.2rem;
+                letter-spacing: .5px;
+            }
+            .admin-content {
+                flex: 1;
+                padding: 24px;
+            }
+            .nav-link {
+                color: rgba(255,255,255,.85);
+            }
+            .nav-link.active, .nav-link:hover {
+                color: #fff;
+                background: rgba(255,255,255,.08);
+                border-radius: .5rem;
+            }
+            .sidebar-section {
+                text-transform: uppercase;
+                font-size: .75rem;
+                opacity: .7;
+                margin-top: 1rem;
+                margin-bottom: .5rem;
+            }
+        </style>
+
         @yield('styles')
         @livewireStyles 
     </head>

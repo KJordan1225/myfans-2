@@ -40,7 +40,6 @@
         }
         .admin-content {
             flex: 1;
-            margin-left: var(--admin-sidebar-width);
             padding: 24px;
         }
         .nav-link {

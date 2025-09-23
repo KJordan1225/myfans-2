@@ -18,6 +18,8 @@ use App\Http\Controllers\CreatorPlanController;
 use App\Http\Controllers\SubscribeController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUsersController;
+use App\Http\Controllers\Admin\AdminCreatorsController;
+
 
 
 Route::get('/', function () {
@@ -160,6 +162,29 @@ Route::middleware(['auth', 'verified'])
         });
 
     });
+
+Route::middleware(['auth', 'verified'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        Route::middleware('role:admin|super-admin')->group(function () {
+
+            // USERS
+            Route::get('/users', [AdminUsersController::class, 'index'])->name('users.index');
+            Route::post('/users/{user}/grant-admin', [AdminUsersController::class, 'grantAdmin'])->name('users.grant-admin');
+            Route::post('/users/{user}/revoke-admin', [AdminUsersController::class, 'revokeAdmin'])->name('users.revoke-admin');
+            Route::post('/users/{user}/toggle-suspend', [AdminUsersController::class, 'toggleSuspend'])->name('users.toggle-suspend');
+
+            // CREATORS
+            Route::get('/creators', [AdminCreatorsController::class, 'index'])->name('creators.index');
+            Route::post('/creators/{user}/resend-onboarding', [AdminCreatorsController::class, 'resendOnboarding'])->name('creators.resend-onboarding');
+
+            // Optional: “view as creator” can be a public-facing route; here we just link to it.
+            // e.g. route('creator.show', $user) (ensure you have it defined)
+        });
+    });
+
 
 
 require __DIR__.'/auth.php';
