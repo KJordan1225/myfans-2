@@ -47,7 +47,7 @@
 
         $acctId  = $creator->profile?->stripe_account_id;
         $obAt    = $creator->profile?->stripe_onboarded_at;
-        $isReady = $acctId && $obAt;
+        $isReady = !empty($acctId);
     @endphp
 
     <div class="col-lg-6">
@@ -82,7 +82,7 @@
 
                 <div class="mt-3 d-flex gap-2">
                     {{-- View as creator (link to your public creator page) --}}
-                    <a href="{{ route('creator.show', $creator) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+                    <a href="#" class="btn btn-sm btn-outline-primary" target="_blank">
                         View as creator
                     </a>
 

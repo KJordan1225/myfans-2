@@ -20,28 +20,26 @@ class AdminCreatorsController extends Controller
         // Option 2: users who have a profile at all
         $query = User::query()
             ->with(['roles', 'profile.media'])
-            ->whereHas('roles', fn($r) => $r->where('name', 'creator'))
+            ->whereHas('roles', fn ($r) => $r->where('name', 'creator'))
             ->when($q, function ($qBuilder) use ($q) {
                 $qBuilder->where(function ($sub) use ($q) {
                     $sub->where('name', 'like', "%{$q}%")
-                        ->orWhere('email', 'like', "%{$q}%")
-                        ->orWhere('username', 'like', "%{$q}%");
+                        ->orWhere('email', 'like', "%{$q}%");
                 });
             })
             ->when($status, function ($qBuilder) use ($status) {
                 $qBuilder->whereHas('profile', function ($sub) use ($status) {
                     if ($status === 'onboarded') {
-                        $sub->whereNotNull('stripe_account_id')
-                            ->whereNotNull('stripe_onboarded_at');
+                        // Onboarded = has a Connect account id
+                        $sub->whereNotNull('stripe_account_id');
                     } elseif ($status === 'not-onboarded') {
-                        $sub->where(function ($q) {
-                            $q->whereNull('stripe_account_id')
-                              ->orWhereNull('stripe_onboarded_at');
-                        });
+                        // Not onboarded = missing Connect account id
+                        $sub->whereNull('stripe_account_id');
                     }
                 });
             })
             ->latest('id');
+
 
         $creators = $query->paginate($perPage)->withQueryString();
 
