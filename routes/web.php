@@ -16,7 +16,8 @@ use App\Http\Controllers\SubscribeByNameController;
 use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\CreatorPlanController;
 use App\Http\Controllers\SubscribeController;
-
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\AdminUsersController;
 
 
 Route::get('/', function () {
@@ -133,6 +134,32 @@ Route::middleware(['auth','verified'])->group(function () {
 // ---------- Public-ish: show a creator profile + plans ----------
 Route::get('/@{username}', [PostController::class, 'showPosts'])
     ->name('posts.username');
+
+// ============ ADMIN DASHBOARD ROUTES ================
+
+Route::middleware(['auth', 'verified'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
+
+        // Either require role:
+        Route::middleware('role:admin|super-admin')->group(function () {
+
+            // ...and optionally also require permission on specific routes
+            Route::get('/dashboard', [AdminDashboardController::class, 'index'])                
+                ->name('dashboard');
+
+            // Example admin resources
+            Route::get('/users', [AdminUsersController::class, 'index'])->name('users.index');
+            Route::get('/creators', fn() => view('admin.pages.creators'))->name('creators.index');
+            Route::get('/plans', fn() => view('admin.pages.plans'))->name('plans.index');
+            Route::get('/subscriptions', fn() => view('admin.pages.subscriptions'))->name('subscriptions.index');
+            Route::get('/posts', fn() => view('admin.pages.posts'))->name('posts.index');
+            Route::get('/reports', fn() => view('admin.pages.reports'))->name('reports.index');
+            Route::get('/settings', fn() => view('admin.pages.settings'))->name('settings.index');
+        });
+
+    });
 
 
 require __DIR__.'/auth.php';

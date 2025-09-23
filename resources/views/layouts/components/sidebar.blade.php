@@ -104,6 +104,9 @@
                     </li>                    
                 </ul>
             </div>
+            @role('admin|super-admin')
+                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">Admin Panel</a>
+            @endrole
         </li>       
     </ul>
 
