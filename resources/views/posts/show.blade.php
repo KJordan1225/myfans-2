@@ -13,11 +13,7 @@
 
     <h1 class="mb-4">
         Posts by {{ $creator->name }}
-    </h1>
-
-    <a href="{{ route('subscribe.show', $creator) }}" class="btn btn-primary">
-        Subscribe to {{ $creator->name }}
-    </a>
+    </h1>    
 
     @php
         /** @var \App\Models\User $creator */
@@ -92,6 +88,11 @@
         </div>
     </div>
 
+    <br><br>
+
+    <a href="{{ route('subscribe.show', $creator) }}" class="btn btn-primary">
+        Subscribe to {{ $creator->name }}
+    </a>
 
     <br><br>
 
