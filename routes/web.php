@@ -182,6 +182,10 @@ Route::middleware(['auth', 'verified'])
 
             // Optional: “view as creator” can be a public-facing route; here we just link to it.
             // e.g. route('creator.show', $user) (ensure you have it defined)
+
+            // BULK ACTIONS
+            Route::post('/users/bulk', [AdminUsersController::class, 'bulk'])
+                ->name('users.bulk');
         });
     });
 
