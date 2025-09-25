@@ -19,6 +19,7 @@ use App\Http\Controllers\SubscribeController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminUsersController;
 use App\Http\Controllers\Admin\AdminCreatorsController;
+use App\Http\Controllers\Admin\AdminSubscriptionsController;
 
 
 
@@ -155,7 +156,9 @@ Route::middleware(['auth', 'verified'])
             Route::get('/users', [AdminUsersController::class, 'index'])->name('users.index');
             Route::get('/creators', fn() => view('admin.pages.creators'))->name('creators.index');
             Route::get('/plans', fn() => view('admin.pages.plans'))->name('plans.index');
-            Route::get('/subscriptions', fn() => view('admin.pages.subscriptions'))->name('subscriptions.index');
+            // Index page used by resources/views/admin/pages/subscriptions.blade.php
+            Route::get('/subscriptions', [AdminSubscriptionsController::class, 'index'])
+                ->name('subscriptions.index');
             Route::get('/posts', fn() => view('admin.pages.posts'))->name('posts.index');
             Route::get('/reports', fn() => view('admin.pages.reports'))->name('reports.index');
             Route::get('/settings', fn() => view('admin.pages.settings'))->name('settings.index');

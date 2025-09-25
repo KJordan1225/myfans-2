@@ -4,6 +4,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\User;
 
 class Subscription extends Model
 {
@@ -21,6 +23,11 @@ class Subscription extends Model
     public function follower() { return $this->belongsTo(User::class, 'user_id'); }
     public function creator()  { return $this->belongsTo(User::class, 'creator_id'); }
     public function plan()     { return $this->belongsTo(CreatorPlan::class, 'creator_plan_id'); }
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id'); // adjust FK if different
+    }
+
 
     public function isActive(): bool
     {

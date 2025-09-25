@@ -118,7 +118,7 @@
                     @if($creator)
                         <div class="fw-semibold">{{ $creator->name }}</div>
                         <div class="small text-muted">{{ '@'.($creator->username ?? Str::slug($creator->name)) }}</div>
-                        <a href="{{ route('creator.show', $creator->id) }}" class="small">View public</a>
+                        <a href="#" class="small">View public</a>
                     @else
                         <span class="text-muted">—</span>
                     @endif
