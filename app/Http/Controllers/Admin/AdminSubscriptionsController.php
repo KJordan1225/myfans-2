@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Subscription; // your model
+use Stripe\StripeClient;
 
 class AdminSubscriptionsController extends Controller
 {
