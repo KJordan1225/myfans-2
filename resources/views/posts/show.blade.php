@@ -26,6 +26,7 @@
         // Alt text helpers
         $bannerAlt = $creator->name . ' banner';
         $avatarAlt = $creator->name . ' avatar';
+        $subscribed = subscribed_to_creator($creator); 
     @endphp
     
     
@@ -90,9 +91,15 @@
 
     <br><br>
 
-    <a href="{{ route('subscribe.show', $creator) }}" class="btn btn-primary">
-        Subscribe to {{ $creator->name }}
-    </a>
+    @if($subscribed)
+        <div class="alert alert-danger">
+            You are subscribed to {{ $creator->name }}.
+        </div>
+    @else
+        <a href="{{ route('subscribe.show', $creator) }}" class="btn btn-primary">
+            Subscribe to {{ $creator->name }}
+        </a>
+    @endif
 
     <br><br>
 
