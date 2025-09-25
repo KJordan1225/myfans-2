@@ -137,23 +137,28 @@
                 <td>{{ $periodEnd }}</td>
 
                 <td class="text-end">
-                    {{-- Example actions (wire routes if you have them) --}}
                     @if($stripeSubId)
-                        <a href="https://dashboard.stripe.com/subscriptions/{{ $stripeSubId }}"
-                           target="_blank"
-                           class="btn btn-sm btn-outline-secondary">
+                        <a href="https://dashboard.stripe.com/test/{{ optional($creator?->profile)->stripe_account_id }}/subscriptions/{{ $stripeSubId }}"
+                        target="_blank"
+                        class="btn btn-sm btn-outline-secondary me-1">
                             Stripe
                         </a>
-                    @endif>
+                    @endif
 
-                    {{-- If you add an admin cancel route, enable this:
-                    <form class="d-inline" method="POST" action="{{ route('admin.subscriptions.cancel', $sub->id) }}"
-                          onsubmit="return confirm('Cancel this subscription?')">
-                        @csrf @method('DELETE')
-                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                    @php $isCanceled = ($status === 'canceled' || $status === 'unpaid' || $status === 'incomplete_expired'); @endphp
+
+                    <form class="d-inline"
+                        method="POST"
+                        action="{{ route('admin.subscriptions.cancel', $sub->id) }}"
+                        onsubmit="return confirm('Cancel this subscription immediately? This stops future billing right away.');">
+                        @csrf
+                        @method('DELETE')
+                        <button class="btn btn-sm btn-outline-danger" {{ $isCanceled ? 'disabled' : '' }}>
+                            Cancel now
+                        </button>
                     </form>
-                    --}}
                 </td>
+
             </tr>
         @empty
             <tr>

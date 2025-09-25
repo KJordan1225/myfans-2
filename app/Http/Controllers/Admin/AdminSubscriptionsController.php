@@ -30,4 +30,66 @@ class AdminSubscriptionsController extends Controller
 
         return view('admin.pages.subscriptions', compact('subs'));
     }
+
+    /**
+     * Immediately cancel a Stripe subscription (stops future billing).
+     * Works for platform- or Connect-owned subscriptions.
+     */
+    public function cancel(Subscription $subscription, StripeClient $stripe)
+    {
+        // 1) Validate we have a Stripe subscription id
+        $stripeSubId = $subscription->stripe_subscription_id ?? null;
+        if (!$stripeSubId) {
+            return back()->with('swal', [
+                'icon'  => 'warning',
+                'title' => 'Missing Stripe subscription id',
+                'text'  => 'This record has no stripe_subscription_id.',
+            ]);
+        }
+
+        // 2) Determine if this subscription lives on a CONNECTED account
+        $creator        = $subscription->creator;                          // relation on your model
+        $stripeAccount  = optional($creator?->profile)->stripe_account_id; // e.g., acct_...
+
+        try {
+            // 3) Hit Stripe API (platform vs connected account)
+            $opts = [];
+            if ($stripeAccount) {
+                $opts['stripe_account'] = $stripeAccount;
+            }
+
+            // Cancel immediately (prevents future invoices). This does not refund prior charges.
+            $stripe->subscriptions->cancel($stripeSubId, [], $opts);
+
+            // 4) Update local record
+            $subscription->status = 'canceled';
+            // If you track these:
+            if ($subscription->isFillable('ended_at')) {
+                $subscription->ended_at = now();
+            }
+            if ($subscription->isFillable('current_period_end') && empty($subscription->current_period_end)) {
+                $subscription->current_period_end = now();
+            }
+            $subscription->save();
+
+            return back()->with('swal', [
+                'icon'  => 'success',
+                'title' => 'Subscription cancelled',
+                'text'  => "Stripe subscription {$stripeSubId} has been cancelled.",
+            ]);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            return back()->with('swal', [
+                'icon'  => 'error',
+                'title' => 'Stripe error',
+                'text'  => $e->getMessage(),
+            ]);
+        } catch (\Throwable $e) {
+            return back()->with('swal', [
+                'icon'  => 'error',
+                'title' => 'Unexpected error',
+                'text'  => $e->getMessage(),
+            ]);
+        }
+    }
+
 }

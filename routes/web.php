@@ -189,6 +189,11 @@ Route::middleware(['auth', 'verified'])
             // BULK ACTIONS
             Route::post('/users/bulk', [AdminUsersController::class, 'bulk'])
                 ->name('users.bulk');
+
+            // NEW: immediate cancel
+            Route::delete('/subscriptions/{subscription}', [AdminSubscriptionsController::class, 'cancel'])
+                ->name('subscriptions.cancel');        
+
         });
     });
 
