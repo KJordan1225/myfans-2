@@ -62,17 +62,40 @@ class SubscribeController extends Controller
     // Success return → persist subscription by reading Checkout Session
     public function success(Request $request, CreatorSubscriptionService $svc)
     {
+        // 1) session_id is required
         $sessionId = $request->string('session_id')->value();
-        if (! $sessionId) return redirect()->route('dashboard')->with('warning','Missing session id.');
-        
+        if (!$sessionId) {
+            return redirect()->route('dashboard')
+                ->with('warning', 'Missing session id.');
+        }
+
+        // 2) acct (stripe connected account id) is required
+        // We append &acct=acct_... to the success URL when creating the session.
+        $acct = $request->string('acct')->value();
+
+        // Optional: allow a fallback you may have stashed pre-redirect
+        if (!$acct && $request->session()->has('stripe_acct')) {
+            $acct = (string) $request->session()->get('stripe_acct');
+        }
+
+        // 3) Basic sanity check to avoid accidentally hitting the platform account
+        if (!$acct || !preg_match('/^acct_[A-Za-z0-9]{8,}$/', $acct)) {
+            return redirect()->route('dashboard')
+                ->with('warning', 'Missing or invalid Stripe connected account.');
+        }
+
         try {
-            $sub = $svc->persistAfterSuccess($request->user(), $sessionId);
+            // 4) Persist using the CONNECTED account context
+            $svc->persistAfterSuccess($request->user(), $sessionId, $acct);
+
             return redirect()->route('subscriptions.mine')
                 ->with('success', 'Subscription active. Welcome aboard!');
         } catch (\Throwable $e) {
-            return redirect()->route('dashboard')->with('error', $e->getMessage());
+            return redirect()->route('dashboard')
+                ->with('error', $e->getMessage());
         }
     }
+
 
     // Cancel page (optional friendly page)
     public function cancelled(Request $request, int $creator)

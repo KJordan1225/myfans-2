@@ -8,17 +8,18 @@ use App\Http\Controllers\PlanController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SubscribeController;
+use App\Http\Controllers\CreatorPlanController;
 use App\Http\Controllers\UserProfileController;
 use App\Http\Controllers\SubscriptionController;
-use App\Http\Controllers\ConnectOnboardingController;
-use App\Http\Controllers\CreatorSubscribePageController;
-use App\Http\Controllers\SubscribeByNameController;
 use App\Http\Controllers\StripeWebhookController;
-use App\Http\Controllers\CreatorPlanController;
-use App\Http\Controllers\SubscribeController;
-use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\SubscribeByNameController;
 use App\Http\Controllers\Admin\AdminUsersController;
+use App\Http\Controllers\ConnectOnboardingController;
+use App\Http\Controllers\CreatorOnboardingController;
 use App\Http\Controllers\Admin\AdminCreatorsController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\CreatorSubscribePageController;
 use App\Http\Controllers\Admin\AdminSubscriptionsController;
 
 
@@ -63,6 +64,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Simple “Monetize” page that shows current Stripe status + actions (view below)
     Route::view('/dashboard/monetize', 'connect.status')
         ->name('creator.monetize');
+
+    Route::post('/creator/monetize/start', [CreatorOnboardingController::class, 'start'])
+        ->name('creator.onboarding.start');
+
+    Route::get('/creator/monetize/refresh', [CreatorOnboardingController::class, 'refresh'])
+        ->name('creator.onboarding.refresh');
+
+    Route::get('/creator/monetize/success', [CreatorOnboardingController::class, 'success'])
+        ->name('creator.onboarding.success');
 
     // Actions that hit your existing controller (from your earlier code)
     Route::get('/connect/{creator}/start',     [ConnectOnboardingController::class, 'start'])
