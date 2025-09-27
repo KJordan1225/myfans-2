@@ -65,15 +65,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/dashboard/monetize', 'connect.status')
         ->name('creator.monetize');
 
-    Route::post('/creator/monetize/start', [CreatorOnboardingController::class, 'start'])
-        ->name('creator.onboarding.start');
-
-    Route::get('/creator/monetize/refresh', [CreatorOnboardingController::class, 'refresh'])
-        ->name('creator.onboarding.refresh');
-
-    Route::get('/creator/monetize/success', [CreatorOnboardingController::class, 'success'])
-        ->name('creator.onboarding.success');
-
     // Actions that hit your existing controller (from your earlier code)
     Route::get('/connect/{creator}/start',     [ConnectOnboardingController::class, 'start'])
         ->name('connect.start');

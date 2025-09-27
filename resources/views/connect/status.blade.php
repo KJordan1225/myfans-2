@@ -81,12 +81,6 @@
                         <button class="btn btn-secondary">Refresh Status</button>
                     </form> -->
 
-                    <form method="POST" action="{{ route('creator.onboarding.start') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-primary">Enable Monetization / Set up payouts</button>
-                    </form>
-
-
                     {{-- Open Express Dashboard --}}
                     <form method="POST" action="{{ route('connect.dashboard', $user) }}">
                         @csrf
