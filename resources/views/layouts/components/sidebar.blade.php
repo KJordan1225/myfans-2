@@ -1,12 +1,42 @@
 {{-- Unified sidebar matching menu2 look & feel --}}
 <aside class="admin-sidebar d-flex flex-column p-3">
-    {{-- Brand/Header --}}
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div class="admin-brand">
-            <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">
-                MyFans
-            </a>
+    {{-- Brand/Header + Username Search --}}
+    <div class="mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <div class="admin-brand">
+                <a href="{{ route('dashboard') }}" class="text-decoration-none text-white">
+                    MyFans
+                </a>
+            </div>
         </div>
+
+        {{-- Username Search (compact for sidebar) --}}
+        <form method="POST" action="{{ route('username.search') }}" class="w-100">
+            @csrf
+            <label for="username-sidebar" class="form-label small mb-1">Find Profile</label>
+            <div class="input-group input-group-sm">
+                <span class="input-group-text" id="username-addon">@</span>
+                <input
+                    type="text"
+                    id="username-sidebar"
+                    name="username"
+                    class="form-control @error('username') is-invalid @enderror"
+                    placeholder="username"
+                    aria-describedby="username-addon"
+                    required
+                >
+                <button class="btn btn-primary" type="submit">Go</button>
+            </div>
+            @error('username')
+                <div class="invalid-feedback d-block">{{ $message }}</div>
+            @enderror
+
+            @if(session('link'))
+                <div class="alert alert-success py-2 px-2 mt-2 mb-0 small">
+                    Profile: <a class="text-break" href="{{ session('link') }}">{{ session('link') }}</a>
+                </div>
+            @endif
+        </form>
     </div>
 
     {{-- Main --}}

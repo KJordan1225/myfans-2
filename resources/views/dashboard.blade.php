@@ -84,6 +84,36 @@
                         <div class="card-header fw-semibold">User Links</div>
                         <div class="card-body">
                             <h6 class="fw-semibold mb-2">Users</h6>
+
+                             {{-- Username Search (compact for sidebar) --}}
+                            <form method="POST" action="{{ route('username.search') }}" class="w-100">
+                                @csrf
+                                <label for="username-sidebar" class="form-label small mb-1">Find Profile</label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text" id="username-addon">@</span>
+                                    <input
+                                        type="text"
+                                        id="username-sidebar"
+                                        name="username"
+                                        class="form-control @error('username') is-invalid @enderror"
+                                        placeholder="username"
+                                        aria-describedby="username-addon"
+                                        required
+                                    >
+                                    <button class="btn btn-primary" type="submit">Go</button>
+                                </div>
+                                @error('username')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+
+                                @if(session('link'))
+                                    <div class="alert alert-success py-2 px-2 mt-2 mb-0 small">
+                                        Profile: <a class="text-break" href="{{ session('link') }}">{{ session('link') }}</a>
+                                    </div>
+                                @endif
+                            </form>
+                        </div>
+
                             
                         </div>
                     </div>

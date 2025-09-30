@@ -25,8 +25,7 @@
 
         // Alt text helpers
         $bannerAlt = $creator->name . ' banner';
-        $avatarAlt = $creator->name . ' avatar';
-        $subscribed = subscribed_to_creator($creator); 
+        $avatarAlt = $creator->name . ' avatar';        
     @endphp
     
     
@@ -92,7 +91,7 @@
     <br><br>
 
     @if($subscribed)
-        <div class="alert alert-danger">
+        <div class="alert alert-success">
             You are subscribed to {{ $creator->name }}.
         </div>
     @else

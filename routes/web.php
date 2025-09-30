@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\AdminCreatorsController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\CreatorSubscribePageController;
 use App\Http\Controllers\Admin\AdminSubscriptionsController;
+use App\Http\Controllers\UsernameController;
 
 
 
@@ -198,6 +199,7 @@ Route::middleware(['auth', 'verified'])
         });
     });
 
-
+    Route::post('/username-search', [UsernameController::class, 'search'])
+        ->name('username.search');
 
 require __DIR__.'/auth.php';
